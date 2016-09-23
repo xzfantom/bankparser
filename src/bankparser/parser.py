@@ -28,7 +28,7 @@ class StatementParser():
 
 
     def parse(self):
-        print('parsing...')
+        #print('parsing...')
         reader = self.split_records()
         for line in reader:
             self.cur_record += 1
@@ -38,7 +38,8 @@ class StatementParser():
             if stmt_line:
                 #stmt_line.assert_valid()
                 self.statement.lines.append(stmt_line)
-        self.statement.print()
+        #self.statement.print()
+        print ('Parsed {} lines'.format(self.cur_record))
         return self.statement
 
     def split_records(self):
@@ -56,7 +57,7 @@ class StatementParser():
                     if not line in ['\n', '\r\n']:
                         strFile.append(line)
                 if line.startswith(startafter): flag = 1
-        self.fin=strFile
+            self.fin=strFile
 
         fields=self.confbank['fields'].split(' ')
         return csv.DictReader(self.fin, delimiter=self.confbank.get(FIELD_DELIMITER,DEFAULT_DELIMITER), fieldnames=fields)

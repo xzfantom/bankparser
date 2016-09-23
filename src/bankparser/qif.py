@@ -10,8 +10,6 @@ class QIFLine:
 
 class QIF:
 
-    bank = ""
-    account = ""
     statement = None
 
     def __init__(self,statement):
@@ -24,6 +22,7 @@ class QIF:
 
         with open(filename,'w',encoding='utf-8') as f:
             f.write(strFile)
+        print('qif saved ({})'.format(filename))
 
     def genstr(self):
         strFile=""
