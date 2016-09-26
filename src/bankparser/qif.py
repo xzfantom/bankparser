@@ -10,10 +10,15 @@ class QIFLine:
 
 class QIF:
 
-    statement = None
+    #statement = None
+    lines = []
+    type = "Bank"
+    account = ""
 
-    def __init__(self,statement):
-        self.statement=statement
+    def __init__(self,statement = None):
+        #self.statement=statement
+        if statement:
+            self.readstatement(statement)
 
 
     def save(self,filename):
@@ -23,6 +28,34 @@ class QIF:
         with open(filename,'w',encoding='utf-8') as f:
             f.write(strFile)
         print('qif saved ({})'.format(filename))
+
+    def printdeb(self):
+
+        for line in self.lines:
+            line.print()
+
+    def readstatement(self,statement):
+        """
+        Преобразование выписки statement в строки qif
+
+        :param statement:
+        :return:
+        """
+
+        self.type = statement.type
+        self.account = statement.account
+
+        for stline in statement.lines:
+            qiffields = [arg for arg in dir(QIFLine) if not arg.startswith('_')]
+            statfields = [arg for arg in dir(StatementLine) if not arg.startswith('_')]
+            qifline=QIFLine()
+            for statfield in statfields:
+                if statfield in qiffields:
+                    setattr(qifline,statfield,getattr(stline,statfield))
+            if qifline:
+                self.lines.append(qifline)
+
+
 
     def genstr(self):
         strFile=""
@@ -41,12 +74,12 @@ class QIF:
         # ^
 
         strFile += '!Account\n'
-        strFile += 'N'+ self.statement.account + '\n'
+        strFile += 'N'+ self.account + '\n'
         strFile += '^\n'
 
-        strFile += '!Type:Bank\n'
+        strFile += '!Type:{}\n'.format(self.type)
 
-        for line in self.statement.lines:
+        for line in self.lines:
 
             strFile+='D'+ line.date.strftime('%m/%d/%Y') + '\n'
             strFile+='T'+str(line.amount) + '\n'

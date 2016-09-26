@@ -15,9 +15,9 @@ class StatementParser():
 
 
     def __init__(self,bank,fin):
-        self.confbank = settings[bank]
+        self.confbank = getBankConfig(bank)
         if type(fin)==str:
-            encoding = self.confbank.get(FIELD_ENCODING, DEFAULT_ENCODING)
+            encoding = self.confbank.encoding
             f = open(fin, 'r', encoding=encoding)
             self.fin=f
         else:
@@ -47,7 +47,7 @@ class StatementParser():
         #dialect=csv.Dialect()
         #dialect.delimiter=self.__confbank.get('delimiter',';')
 
-        startafter = self.confbank[FIELD_STARTAFTER]
+        startafter = self.confbank.startafter
         if startafter:
             flag = 0
             strFile = []
@@ -59,8 +59,8 @@ class StatementParser():
                 if line.startswith(startafter): flag = 1
             self.fin=strFile
 
-        fields=self.confbank['fields'].split(' ')
-        return csv.DictReader(self.fin, delimiter=self.confbank.get(FIELD_DELIMITER,DEFAULT_DELIMITER), fieldnames=fields)
+        fields=self.confbank.fields
+        return csv.DictReader(self.fin, delimiter=self.confbank.delimiter, fieldnames=fields)
 
     def parse_record(self,line):
         #print(line)
@@ -68,7 +68,7 @@ class StatementParser():
         sl = StatementLine()
 
         # Список имен полей для банка из ini файла
-        inifields = settings.get(self.bank, 'fields').split(' ')
+        inifields = self.confbank.fields
         objfields = [arg for arg in dir(StatementLine) if not arg.startswith('_')]
         for field in objfields:
             if field in inifields:
@@ -77,7 +77,7 @@ class StatementParser():
                 # self.field=value
                 setattr(sl, field, value)
         if self.cur_record==1:
-            self.statement.account=self.confbank.get(sl.account,sl.account)
+            self.statement.account=self.confbank.accounts.get (sl.account,sl.account)
         return sl
 
 
@@ -97,7 +97,7 @@ class StatementParser():
 
 
     def parse_datetime(self, value):
-        date_format=self.confbank.get(FIELD_DATEFORMAT,DEFAULT_DATEFORMAT)
+        date_format=self.confbank.dateformat
         return datetime.strptime(value, date_format)
 
 

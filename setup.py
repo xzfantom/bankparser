@@ -6,7 +6,7 @@ from distutils.core import setup
 
 version = "0.0.1"
 
-with open('README.md') as f:
+with open('README.rst') as f:
     long_description = f.read()
 
 setup(name='bankparser',

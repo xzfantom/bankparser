@@ -20,9 +20,58 @@ FIELD_STARTAFTER = 'startafter'
 FIELD_DELIMITER = 'delimiter'
 DEFAULT_DELIMITER = ';'
 
-settings = configparser.ConfigParser()
-#settings=\
-settings.read(configfile,encoding='utf-8')
+
+
+
+
+class BankConfig:
+        _isreadini = False
+        delimiter = ';'
+        bank = ""
+        encoding = "utf-8"
+        startafter = None
+        type = "Bank"
+        fields = []
+        dateformat = "%Y-%m-%d %H:%M:%S"
+        accounts= {}
+
+        def readini(self,bank):
+                if not self._isreadini:
+                        self.bank=bank
+                        bankinifile=bank+".ini"
+                        settings = configparser.ConfigParser()
+                        # settings=\
+                        settings.read(bankinifile, encoding='utf-8')
+                        # Список имен полей BankConfig
+                        objfields = [arg for arg in dir(BankConfig) if not arg.startswith('_')]
+                        # Чтение общих настроек банка
+                        for field in objfields:
+                                defaultvalue=getattr(self,field)
+                                inivalue=settings["common"].get(field, defaultvalue)
+                                setattr(self, field, inivalue)
+                        # Список полей в массив
+                        self.fields = self.fields.split(' ')
+                        # Чтение спика счетов
+
+                        for key in settings['accounts']:
+                                self.accounts[key] = settings['accounts'][key]
+
+                        self._isreadini=True
+
+        def printdeb(self):
+                # Список имен полей BankConfig
+                objfields = [arg for arg in dir(BankConfig) if not arg.startswith('_')]
+                for field in objfields:
+                        value = getattr(self, field)
+                        print('{0} = {1}'.format(field,value))
+
+bankconfig = BankConfig()
+
+def getBankConfig(bank):
+        bankconfig.readini(bank)
+        return bankconfig
+
+
 
 
 #with open(configfile, "r") as f:

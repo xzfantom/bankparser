@@ -9,6 +9,7 @@ class Statement:
     currency = DEFAULT_CURRENCY
     bank =None
     lines = []
+    type = "Bank"
 
     def print(self):
         print('statement {0} {1}'.format(self.bank,self.account))
