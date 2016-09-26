@@ -32,7 +32,7 @@ setup(name='bankparser',
       namespace_packages=["bankparser"],
       entry_points={
           'console_scripts':
-          ['bankparser = bankparser.tool:run'],
+          ['bankparser = bankparsercli:main'],
       },
       include_package_data=True,
       zip_safe=True
