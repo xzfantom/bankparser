@@ -1,1 +1,1 @@
-pip install setup.py develop
+python setup.py develop
