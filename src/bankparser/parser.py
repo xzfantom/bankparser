@@ -25,6 +25,7 @@ class StatementParser():
         self.statement = Statement()
         self.bank = bank
         self.statement.bank=bank
+        self.statement.type=self.confbank.type
 
 
     def parse(self):
@@ -75,6 +76,9 @@ class StatementParser():
                 rawvalue = line[field]
                 value = self.parse_value(rawvalue, field)
                 # self.field=value
+                if field=='action':
+
+                    value=self.confbank.actions.get(value.lower(),value)
                 setattr(sl, field, value)
         if self.cur_record==1:
             self.statement.account=self.confbank.accounts.get (sl.account,sl.account)

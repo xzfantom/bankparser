@@ -34,6 +34,7 @@ class BankConfig:
         fields = []
         dateformat = "%Y-%m-%d %H:%M:%S"
         accounts= {}
+        actions = {'buy': 'buy','sell': 'sell'}
 
         def readini(self,bank):
                 if not self._isreadini:
@@ -55,6 +56,9 @@ class BankConfig:
 
                         for key in settings['accounts']:
                                 self.accounts[key] = settings['accounts'][key]
+                        # Чтение названия операций для ценных бумаг
+                        for key in settings['actions']:
+                                self.actions[key] = settings['actions'][key]
 
                         self._isreadini=True
 

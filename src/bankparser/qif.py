@@ -7,6 +7,14 @@ class QIFLine:
     amount = 0.0
     description = ""
     account = ""
+    # invest type
+    action = ""  # buy, sell
+    securityname = ""  # имя ценной бумаги
+    price = 0.0  # Цена
+    quantity = 0.0  # Количество бумаг
+    commission = 0.0  # Комиссия
+
+
 
 class QIF:
 
@@ -83,7 +91,18 @@ class QIF:
 
             strFile+='D'+ line.date.strftime('%m/%d/%Y') + '\n'
             strFile+='T'+str(line.amount) + '\n'
-            strFile+='P'+str(line.description) + '\n'
+            if line.description:
+                strFile+='P'+str(line.description) + '\n'
+            if line.action:
+                strFile += 'N' + str(line.action) + '\n'
+            if line.securityname:
+                strFile += 'Y' + str(line.securityname) + '\n'
+            if line.price:
+                strFile += 'I' + str(line.price) + '\n'
+            if line.quantity:
+                strFile += 'Q' + str(line.quantity) + '\n'
+            if line.commission:
+                strFile += 'O' + str(line.commission) + '\n'
 
             strFile += '^\n'
 
