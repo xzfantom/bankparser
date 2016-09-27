@@ -80,8 +80,8 @@ class MyBuild:
         str+="Описание настроек секции [common]: \n\n"
         for field in self.commons:
             str+=field['name']+"\n"
-            str += "   {0}\n".format(field['description'])
-            str += "   По умолчанию: {0}\n\n".format(field['default'])
+            str += "   |{0}\n".format(field['description'])
+            str += "   |По умолчанию: {0}\n\n".format(field['default'])
 
         return str
 
