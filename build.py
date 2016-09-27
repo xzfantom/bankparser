@@ -82,6 +82,7 @@ class MyBuild:
             str+=field['name']+"\n"
             str += "   {0}. По умолчанию: {1}\n".format(field['description'],field['default'])
             #str += "   По умолчанию: {0}\n\n".format(field['default'])
+        str += "\n"
 
         return str
 
@@ -97,8 +98,10 @@ class MyBuild:
         str+="Описание полей: \n\n"
         for field in self.fields:
             str+=field['name']+"\n"
-            str += "   {0}\n".format(field['description'])
-            str += "   Тип поля: {0}\n\n".format(field['type'])
+            str += "   {0}. Тип поля: {1}\n".format(field['description'],field['type'])
+            #str += "   Тип поля: {0}\n\n".format(field['type'])
+
+        str += "\n"
 
         return str
 

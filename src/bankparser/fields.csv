@@ -4,7 +4,7 @@ account;string;Счет;
 amount;float;Сумма;T
 description;string;Описание;P
 action;string;Операция (для ценных бумаг): buy, sell;N
-securityname;None;Имя ценной бумаги;Y
+securityname;string;Имя ценной бумаги;Y
 price;float;Цена (для ценных бумаг);I
 quantity;float;Количество бумаг ;Q
 commission;float;Комиссия (для ценных бумаг);O
