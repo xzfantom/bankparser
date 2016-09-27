@@ -30,6 +30,7 @@ setup(name='bankparser',
       packages=find_packages('src'),
       package_dir={'': 'src'},
       namespace_packages=["bankparser"],
+      #scripts=['src/bankparser/bankparsercli.py'],
       entry_points={
           'console_scripts':
           ['bankparser = bankparser.bankparsercli:main'],

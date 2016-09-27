@@ -1,40 +1,22 @@
 import configparser
+from bankparser.confcommons import *
 
 configfile='config.ini'
-
-FIELDS={'encoding': 'utf-8',
-        'dateformat': '%Y-%m-%d %H:%M:%S'
-
-        }
-
-FIELD_ENCODING='encoding'
-DEFAULT_ENCODING='utf-8'
-
 DEFAULT_CURRENCY = 'RUB'
-
-FIELD_DATEFORMAT='dateformat'
-DEFAULT_DATEFORMAT = '%Y-%m-%d %H:%M:%S'
-
-FIELD_STARTAFTER = 'startafter'
-
-FIELD_DELIMITER = 'delimiter'
-DEFAULT_DELIMITER = ';'
-
-
-
-
 
 class BankConfig:
         _isreadini = False
-        delimiter = ';'
-        bank = ""
-        encoding = "utf-8"
-        startafter = None
-        type = "Bank"
-        fields = []
-        dateformat = "%Y-%m-%d %H:%M:%S"
+        commons = ConfCommons()
+
+        # delimiter = ';'
+        # bank = ""
+        # encoding = "utf-8"
+        # startafter = None
+        # type = "Bank"
+        # fields = []
+        # dateformat = "%Y-%m-%d %H:%M:%S"
         accounts= {}
-        actions = {'buy': 'buy','sell': 'sell'}
+        actions = {}
 
         def readini(self,bank):
                 if not self._isreadini:
@@ -44,21 +26,22 @@ class BankConfig:
                         # settings=\
                         settings.read(bankinifile, encoding='utf-8')
                         # Список имен полей BankConfig
-                        objfields = [arg for arg in dir(BankConfig) if not arg.startswith('_')]
+                        objfields = [arg for arg in dir(ConfCommons) if not arg.startswith('_')]
                         # Чтение общих настроек банка
                         for field in objfields:
-                                defaultvalue=getattr(self,field)
+                                defaultvalue=getattr(self.commons,field)
                                 inivalue=settings["common"].get(field, defaultvalue)
-                                setattr(self, field, inivalue)
+                                setattr(self.commons, field, inivalue)
                         # Список полей в массив
-                        self.fields = self.fields.split(' ')
+                        self.commons.fields = self.commons.fields.split(' ')
                         # Чтение спика счетов
-
-                        for key in settings['accounts']:
-                                self.accounts[key] = settings['accounts'][key]
+                        if 'accounts' in settings.sections():
+                                for key in settings['accounts']:
+                                          self.accounts[key] = settings['accounts'][key]
                         # Чтение названия операций для ценных бумаг
-                        for key in settings['actions']:
-                                self.actions[key] = settings['actions'][key]
+                        if 'actions' in settings.sections():
+                                for key in settings['actions']:
+                                        self.actions[key] = settings['actions'][key]
 
                         self._isreadini=True
 

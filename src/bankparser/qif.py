@@ -1,20 +1,7 @@
 from datetime import datetime
 from bankparser.statement import *
 from bankparser.statementline import *
-
-class QIFLine:
-    date = datetime.now()
-    amount = 0.0
-    description = ""
-    account = ""
-    # invest type
-    action = ""  # buy, sell
-    securityname = ""  # имя ценной бумаги
-    price = 0.0  # Цена
-    quantity = 0.0  # Количество бумаг
-    commission = 0.0  # Комиссия
-
-
+from bankparser.qifline import *
 
 class QIF:
 
@@ -88,21 +75,15 @@ class QIF:
         strFile += '!Type:{}\n'.format(self.type)
 
         for line in self.lines:
-
-            strFile+='D'+ line.date.strftime('%m/%d/%Y') + '\n'
-            strFile+='T'+str(line.amount) + '\n'
-            if line.description:
-                strFile+='P'+str(line.description) + '\n'
-            if line.action:
-                strFile += 'N' + str(line.action) + '\n'
-            if line.securityname:
-                strFile += 'Y' + str(line.securityname) + '\n'
-            if line.price:
-                strFile += 'I' + str(line.price) + '\n'
-            if line.quantity:
-                strFile += 'Q' + str(line.quantity) + '\n'
-            if line.commission:
-                strFile += 'O' + str(line.commission) + '\n'
+            qiffields = [arg for arg in dir(QIFLine) if not arg.startswith('_')]
+            for field in qiffields:
+                value=getattr(line,field)
+                qif_letter=qifletters[field]
+                if value:
+                    if field == 'date':
+                        strFile += 'D' + line.date.strftime('%m/%d/%Y') + '\n'
+                    else:
+                        strFile += qif_letter + str(value) + '\n'
 
             strFile += '^\n'
 

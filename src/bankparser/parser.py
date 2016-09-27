@@ -17,7 +17,7 @@ class StatementParser():
     def __init__(self,bank,fin):
         self.confbank = getBankConfig(bank)
         if type(fin)==str:
-            encoding = self.confbank.encoding
+            encoding = self.confbank.commons.encoding
             f = open(fin, 'r', encoding=encoding)
             self.fin=f
         else:
@@ -25,7 +25,7 @@ class StatementParser():
         self.statement = Statement()
         self.bank = bank
         self.statement.bank=bank
-        self.statement.type=self.confbank.type
+        self.statement.type=self.confbank.commons.type
 
 
     def parse(self):
@@ -37,9 +37,7 @@ class StatementParser():
                 continue
             stmt_line = self.parse_record(line)
             if stmt_line:
-                #stmt_line.assert_valid()
                 self.statement.lines.append(stmt_line)
-        #self.statement.print()
         print ('Parsed {} lines'.format(self.cur_record))
         return self.statement
 
@@ -48,7 +46,7 @@ class StatementParser():
         #dialect=csv.Dialect()
         #dialect.delimiter=self.__confbank.get('delimiter',';')
 
-        startafter = self.confbank.startafter
+        startafter = self.confbank.commons.startafter
         if startafter:
             flag = 0
             strFile = []
@@ -60,8 +58,8 @@ class StatementParser():
                 if line.startswith(startafter): flag = 1
             self.fin=strFile
 
-        fields=self.confbank.fields
-        return csv.DictReader(self.fin, delimiter=self.confbank.delimiter, fieldnames=fields)
+        fields=self.confbank.commons.fields
+        return csv.DictReader(self.fin, delimiter=self.confbank.commons.delimiter, fieldnames=fields)
 
     def parse_record(self,line):
         #print(line)
@@ -69,7 +67,7 @@ class StatementParser():
         sl = StatementLine()
 
         # Список имен полей для банка из ini файла
-        inifields = self.confbank.fields
+        inifields = self.confbank.commons.fields
         objfields = [arg for arg in dir(StatementLine) if not arg.startswith('_')]
         for field in objfields:
             if field in inifields:
@@ -77,11 +75,10 @@ class StatementParser():
                 value = self.parse_value(rawvalue, field)
                 # self.field=value
                 if field=='action':
-
                     value=self.confbank.actions.get(value.lower(),value)
                 setattr(sl, field, value)
         if self.cur_record==1:
-            self.statement.account=self.confbank.accounts.get (sl.account,sl.account)
+            self.statement.account=self.confbank.accounts.get(sl.account,sl.account)
         return sl
 
 
@@ -101,9 +98,8 @@ class StatementParser():
 
 
     def parse_datetime(self, value):
-        date_format=self.confbank.dateformat
+        date_format=self.confbank.commons.dateformat
         return datetime.strptime(value, date_format)
-
 
     def parse_float(self, value):
         val = value.replace(',', '.')
