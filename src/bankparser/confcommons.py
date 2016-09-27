@@ -1,4 +1,4 @@
-# Generate automatically from build.py
+# Generate automatically by build.py
 # don`t change manually
 
 class ConfCommons:

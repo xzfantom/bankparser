@@ -3,11 +3,17 @@
 """
 from setuptools import find_packages
 from distutils.core import setup
-
+import build
 version = "0.0.1"
 
-with open('README.rst') as f:
+# Генерация файлов и справки
+mybuild = build.MyBuild()
+mybuild.gen_files()
+
+with open('README.rst',encoding='utf-8') as f:
     long_description = f.read()
+
+
 
 setup(name='bankparser',
       version=version,

@@ -15,16 +15,16 @@ def main(args=None):
 
     parser = argparse.ArgumentParser()
     parser.add_argument('bank', help='Bank name')
-    parser.add_argument('csvfile', help='path to bank file')
+    parser.add_argument('infile', help='path to bank file')
     parser.add_argument('--outfile', help='path to qif file')
     args = parser.parse_args()
 
     if args.outfile:
         newname = args.outfile
     else:
-        newname = os.path.splitext(args.csvfile)[0]+'.qif'
+        newname = os.path.splitext(args.infile)[0]+'.qif'
 
-    parser=bankparser.parser.StatementParser(args.bank,args.csvfile)
+    parser=bankparser.parser.StatementParser(args.bank,args.infile)
     parser.parse()
 
     qif=QIF(parser.statement)

@@ -4,13 +4,15 @@
 """
 
 import csv
+import glob
+import shutil
 
 class MyBuild:
 
     rootdir = "src/bankparser/"
     ffields =None
     #statementlinefile = rootdir + "statementline-test.py"
-
+    pubdir = "c:/temp/andrey/bankparser/"
 
     typemap={'date':'datetime.now()','string':"\"\"",'float':'0.0'}
 
@@ -34,18 +36,58 @@ class MyBuild:
         #self.gen_fields_file('QIFLine')
         #self.gen_fields_file('StatementLine')
         self.write_files()
+        print("readme generation...")
         self.readme_replace()
+        self.copy_script()
 
     def write_files(self):
+
         className='StatementLine'
+        print("{} generation...".format(className))
         str = self.get_statement_str(className)
         self.write_file(className, str)
         className = 'QIFLine'
+        print("{} generation...".format(className))
         str = self.get_statement_str(className)
         self.write_file(className, str)
         className = "ConfCommons"
+        print("{} generation...".format(className))
         str = self.get_commons_str(className)
         self.write_file(className, str)
+
+    def copy_script(self):
+
+
+        # libs
+        dest_dir = self.pubdir + "bankparser"
+        mask=self.rootdir + "*.py"
+        for file in glob.glob(mask):
+            print("copyng file {}".format(file))
+            shutil.copy(file, dest_dir)
+        # rootfile
+        rootfile=self.rootdir + "bankparsercli.py"
+        dest_dir = self.pubdir
+        print("copyng file {}".format(rootfile))
+        shutil.copy(rootfile, dest_dir)
+        # ini files
+        mask = self.rootdir + "*.ini"
+        for file in glob.glob(mask):
+            print("copyng file {}".format(file))
+            shutil.copy(file, dest_dir)
+        # generate bat vtb24
+        self.save_bat("statement.csv","vtb24")
+        self.save_bat("report.txt","adshares")
+        
+
+    def save_bat(self,filetomove,bank):
+        downloadsfolder= "c:\\Users\\Пользователь\\Downloads\\" + filetomove
+        batstr = []
+        destsl = self.pubdir.replace('/', '\\') + filetomove
+        batstr += "move {0} {1}\n".format(downloadsfolder,destsl)
+        batstr += "python.exe bankparsercli.py {0} {1}\n".format(bank,filetomove)
+        batstr += "pause\n"
+        with open(self.pubdir + bank +".bat", "w", encoding="cp866") as f:
+            f.writelines(batstr)
 
     def readme_replace(self):
         with open('readme.rst','r',encoding='utf-8') as f:
@@ -117,7 +159,7 @@ class MyBuild:
         # Генерация файлов
         filename = self.rootdir + className.lower() + ".py"
         stline = open(filename, "w", encoding='utf-8')
-        stline.write("# Generate automatically from build.py\n")
+        stline.write("# Generate automatically by build.py\n")
         stline.write("# don`t change manually\n\n")
         stline.writelines(lines)
         stline.close()
