@@ -77,7 +77,7 @@ class MyBuild:
         # generate bat vtb24
         self.save_bat("statement.csv","vtb24")
         self.save_bat("report.txt","adshares")
-        
+
 
     def save_bat(self,filetomove,bank):
         downloadsfolder= "c:\\Users\\Пользователь\\Downloads\\" + filetomove
@@ -122,7 +122,10 @@ class MyBuild:
         str+="Описание настроек секции [common]: \n\n"
         for field in self.commons:
             str+=field['name']+"\n"
-            str += "   {0}. По умолчанию: {1}\n".format(field['description'],field['default'])
+            if field['description'].startswith("Обязательное поле"):
+                str += "   {0}\n".format(field['description'])
+            else:
+                str += "   {0}. По умолчанию: {1}\n".format(field['description'],field['default'])
             #str += "   По умолчанию: {0}\n\n".format(field['default'])
         str += "\n"
 
@@ -140,6 +143,7 @@ class MyBuild:
         str+="Описание полей: \n\n"
         for field in self.fields:
             str+=field['name']+"\n"
+
             str += "   {0}. Тип поля: {1}\n".format(field['description'],field['type'])
             #str += "   Тип поля: {0}\n\n".format(field['type'])
 
@@ -152,6 +156,7 @@ class MyBuild:
         #f.write("from datetime import datetime\n\n\n")
         str+="class {}:\n\n".format(className)
         for field in self.commons:
+
              str += "   {0} = {1} # {2}\n".format(field['name'], field['default'], field['description'])
         return str
 
