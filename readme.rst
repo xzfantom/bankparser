@@ -7,7 +7,7 @@
 
 Для настройки на свой банк создайте ini файл с именем банка. Bank_name.ini
 В секции common укажите общие настройки
-..commons_start
+.. commons_start
 
 Описание настроек секции [common]: 
 
@@ -35,7 +35,7 @@ dateformat
    Формат даты в банковском файле
    По умолчанию: '%Y-%m-%d %H:%M:%S'
 
-..commons_finish
+.. commons_finish
 
 Возможно добавить секции [accounts]
 Счет=Имя счета
@@ -46,7 +46,7 @@ dateformat
 Действие=buy
 
 
-..fields_start
+.. fields_start
 
 Описание полей: 
 
@@ -86,7 +86,7 @@ commission
    Комиссия (для ценных бумаг)
    Тип поля: float
 
-..fields_finish
+.. fields_finish
 
 (c) Andrey Kapustin
 

@@ -53,14 +53,14 @@ class MyBuild:
         newlines=[]
         readline=True
         for line in filelines:
-            if line == "..fields_finish\n" or line == "..commons_finish\n":
+            if line == "..fields_finish\n" or line == ".. commons_finish\n":
                 readline = True
             if readline:
                 newlines += line
-            if line == "..fields_start\n":
+            if line == ".. fields_start\n":
                 readline = False
                 newlines+=self.get_help_fields()
-            if line == "..commons_start\n":
+            if line == ".. commons_start\n":
                 readline = False
                 newlines += self.get_help_commons()
                 #insert help
