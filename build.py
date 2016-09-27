@@ -53,7 +53,7 @@ class MyBuild:
         newlines=[]
         readline=True
         for line in filelines:
-            if line == "..fields_finish\n" or line == ".. commons_finish\n":
+            if line == ".. fields_finish\n" or line == ".. commons_finish\n":
                 readline = True
             if readline:
                 newlines += line

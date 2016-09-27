@@ -7,6 +7,7 @@
 
 Для настройки на свой банк создайте ini файл с именем банка. Bank_name.ini
 В секции common укажите общие настройки
+
 .. commons_start
 
 Описание настроек секции [common]: 
@@ -87,6 +88,3 @@ commission
    Тип поля: float
 
 .. fields_finish
-
-(c) Andrey Kapustin
-
