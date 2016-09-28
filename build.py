@@ -134,10 +134,14 @@ class MyBuild:
             banksite=confb.commons.banksite
             #bankini=os.path.basename(confb.inifile)
             #str += " * {0} {1} ({2})\n".format(bankname,banksite,bankini)
-            if confb.commons.description:
-                str += " * `{0}`_ ({4}). **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname, banksite,confb.commons.statementfilename, bank,confb.commons.description)
-            else:
-                str += " * `{0}`_. **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname,banksite,confb.commons.statementfilename,bank)
+            str += "* `{0}`_ {4}. **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname, banksite,
+                                                                                            confb.commons.statementfilename,
+                                                                                            bank,
+                                                                                            confb.commons.description)
+            # if confb.commons.description:
+            #     str += "* `{0}`_ ({4}). **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname, banksite,confb.commons.statementfilename, bank,confb.commons.description)
+            # else:
+            #     str += "* `{0}`_. **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname,banksite,confb.commons.statementfilename,bank)
 
         str += "\n"
         return  str

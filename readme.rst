@@ -36,9 +36,9 @@ out_file_name
 
 .. banks_start
 
- * `Альфа-директ`_ (отчет о движении ценных бумаг). **adshares**. Файл выписки report.txt
+* `Альфа-директ`_ отчет о движении ценных бумаг. **adshares**. Файл выписки report.txt
     .. _`Альфа-директ`: http://alfadirect.ru
- * `ВТБ24`_. **vtb24**. Файл выписки statement.csv
+* `ВТБ24`_ . **vtb24**. Файл выписки statement.csv
     .. _`ВТБ24`: http://vtb24.ru
 
 .. banks_finish
@@ -71,9 +71,9 @@ banksite
 bankname
    Название банка. По умолчанию: None
 statementfilename
-   Стандартное имя файла выписки. По умолчанию: None
+   Стандартное имя файла выписки. По умолчанию: ''
 description
-   Описание. По умолчанию: None
+   Описание. По умолчанию: ''
 
 .. commons_finish
 
