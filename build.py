@@ -134,7 +134,7 @@ class MyBuild:
             banksite=confb.commons.banksite
             #bankini=os.path.basename(confb.inifile)
             #str += " * {0} {1} ({2})\n".format(bankname,banksite,bankini)
-            str += "* `{0}`_ {4}. *{3}*. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname, banksite,
+            str += "* `{0}`_ {4}. Параметр запуска {3}. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname, banksite,
                                                                                             confb.commons.statementfilename,
                                                                                             bank,
                                                                                             confb.commons.description)
