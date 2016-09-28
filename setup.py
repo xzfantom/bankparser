@@ -3,12 +3,12 @@
 """
 from setuptools import find_packages
 from distutils.core import setup
-import build
+#import src.bankparser.build as build
 version = "0.0.1"
 
 # Генерация файлов и справки
-mybuild = build.MyBuild()
-mybuild.gen_files()
+#mybuild = build.MyBuild()
+#mybuild.gen_files()
 
 with open('README.rst',encoding='utf-8') as f:
     long_description = f.read()
@@ -33,15 +33,24 @@ setup(name='bankparser',
           'Environment :: Console',
           'Operating System :: OS Independent',
           'License :: OSI Approved :: GNU General Public License v3'],
-      packages=find_packages('src'),
-      package_dir={'': 'src'},
-      namespace_packages=["bankparser"],
-      #scripts=['src/bankparser/bankparsercli.py'],
+      #packages=find_packages('src'),
+      packages=['bankparser'],
+
+      package_dir={'bankparser': 'src'},
+
+
+      package_data={'bankparser': ['*.ini']},
+
+      # install_requires=['setuptools',
+      #                   'appdirs'
+      #                   ],
+      #namespace_packages=["bankparser"],
+
       entry_points={
           'console_scripts':
           ['bankparser = bankparser.bankparsercli:main'],
       },
-      include_package_data=True,
+      #include_package_data=True,
       zip_safe=True
       )
 

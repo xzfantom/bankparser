@@ -4,16 +4,16 @@
 """
 
 import csv
-import glob
 import shutil
 import os.path
 from bankparser.config import *
+
 
 class MyBuild:
 
 
     ffields =None
-    pubdir = "c:/temp/andrey/bankparser/"
+    #pubdir = "c:/temp/andrey/bankparser/"
 
     typemap={'date':'datetime.now()','string':"\"\"",'float':'0.0'}
 
@@ -57,7 +57,7 @@ class MyBuild:
         self.readme_replace("commons")
         self.readme_replace("fields")
         self.readme_replace("banks")
-        self.copy_script()
+        #self.copy_script()
 
     def write_files(self):
 
@@ -74,39 +74,39 @@ class MyBuild:
         str = self.get_commons_str(className)
         self.write_file(className, str)
 
-    def copy_script(self):
+    # def copy_script(self):
+    #
+    #
+    #     # libs
+    #     dest_dir = self.pubdir + "bankparser"
+    #     mask=os.path.join(SRCDIR, "*.py")
+    #     for file in glob.glob(mask):
+    #         print("copyng file {}".format(file))
+    #         shutil.copy(file, dest_dir)
+    #     # rootfile
+    #     rootfile=os.path.join(SRCDIR, "bankparsercli.py")
+    #     dest_dir = self.pubdir
+    #     print("copyng file {}".format(rootfile))
+    #     shutil.copy(rootfile, dest_dir)
+    #     # ini files
+    #     mask = os.path.join(SRCDIR, "*.ini")
+    #     for file in glob.glob(mask):
+    #         print("copyng file {}".format(file))
+    #         shutil.copy(file, dest_dir)
+    #     # generate bat vtb24
+    #     self.save_bat("statement.csv","vtb24")
+    #     self.save_bat("report.txt","adshares")
 
 
-        # libs
-        dest_dir = self.pubdir + "bankparser"
-        mask=os.path.join(SRCDIR, "*.py")
-        for file in glob.glob(mask):
-            print("copyng file {}".format(file))
-            shutil.copy(file, dest_dir)
-        # rootfile
-        rootfile=os.path.join(SRCDIR, "bankparsercli.py")
-        dest_dir = self.pubdir
-        print("copyng file {}".format(rootfile))
-        shutil.copy(rootfile, dest_dir)
-        # ini files
-        mask = os.path.join(SRCDIR, "*.ini")
-        for file in glob.glob(mask):
-            print("copyng file {}".format(file))
-            shutil.copy(file, dest_dir)
-        # generate bat vtb24
-        self.save_bat("statement.csv","vtb24")
-        self.save_bat("report.txt","adshares")
-
-
-    def save_bat(self,filetomove,bank):
-        downloadsfolder= "c:\\Users\\Пользователь\\Downloads\\" + filetomove
-        batstr = []
-        destsl = self.pubdir.replace('/', '\\') + filetomove
-        batstr += "move {0} {1}\n".format(downloadsfolder,destsl)
-        batstr += "python.exe bankparsercli.py {0} {1}\n".format(bank,filetomove)
-        batstr += "pause\n"
-        with open(self.pubdir + bank +".bat", "w", encoding="cp866") as f:
-            f.writelines(batstr)
+    # def save_bat(self,filetomove,bank):
+    #     downloadsfolder= "c:\\Users\\Пользователь\\Downloads\\" + filetomove
+    #     batstr = []
+    #     destsl = self.pubdir.replace('/', '\\') + filetomove
+    #     batstr += "move {0} {1}\n".format(downloadsfolder,destsl)
+    #     batstr += "python.exe bankparsercli.py {0} {1}\n".format(bank,filetomove)
+    #     batstr += "pause\n"
+    #     with open(self.pubdir + bank +".bat", "w", encoding="cp866") as f:
+    #         f.writelines(batstr)
 
 
     def readme_replace(self,blockname):

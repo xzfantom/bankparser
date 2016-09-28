@@ -14,7 +14,7 @@ bankparser
 
 Зайти в каталог с исходниками::
 
-  python setup.py install
+  pip install .
 
 Использование
 -------------
