@@ -11,3 +11,5 @@ class ConfCommons:
    dateformat = '%Y-%m-%d %H:%M:%S' # Формат даты в банковском файле
    banksite = None # Ссылка на сайт банка
    bankname = None # Название банка
+   statementfilename = None # Стандартное имя файла выписки
+   description = None # Описание

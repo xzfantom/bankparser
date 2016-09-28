@@ -6,21 +6,20 @@
 import csv
 import glob
 import shutil
-import os
+import os.path
 from bankparser.config import *
 
 class MyBuild:
 
-    rootdir = "src/bankparser/"
+
     ffields =None
-    #statementlinefile = rootdir + "statementline-test.py"
     pubdir = "c:/temp/andrey/bankparser/"
 
     typemap={'date':'datetime.now()','string':"\"\"",'float':'0.0'}
 
-    fieldsfile = rootdir + "fields.csv"
+    fieldsfile = os.path.join(SRCDIR, "fields.csv")
     fields = list()
-    commonfile = rootdir + "commons.csv"
+    commonfile = os.path.join(SRCDIR, "commons.csv")
     commons = list()
     #fieldsinfields=["name","type","description","qif_letter"]
 
@@ -64,17 +63,17 @@ class MyBuild:
 
         # libs
         dest_dir = self.pubdir + "bankparser"
-        mask=self.rootdir + "*.py"
+        mask=os.path.join(SRCDIR, "*.py")
         for file in glob.glob(mask):
             print("copyng file {}".format(file))
             shutil.copy(file, dest_dir)
         # rootfile
-        rootfile=self.rootdir + "bankparsercli.py"
+        rootfile=os.path.join(SRCDIR, "bankparsercli.py")
         dest_dir = self.pubdir
         print("copyng file {}".format(rootfile))
         shutil.copy(rootfile, dest_dir)
         # ini files
-        mask = self.rootdir + "*.ini"
+        mask = os.path.join(SRCDIR, "*.ini")
         for file in glob.glob(mask):
             print("copyng file {}".format(file))
             shutil.copy(file, dest_dir)
@@ -126,18 +125,20 @@ class MyBuild:
 
     def get_help_banks(self):
         # Получить список ini файлов
-        mask = self.rootdir + "*.ini"
+        listbanks=bankconfig.get_list_banks()
         str = []
         str += "\n"
-        for file in glob.glob(mask):
-            inifile=os.path.basename(file)
-            bank = os.path.splitext(inifile)[0]
-            #bank=os.path.splitext(file)[0]
-            bankconfig.clear()
+        for bank in listbanks:
             confb=getBankConfig(bank)
             bankname=confb.commons.bankname
             banksite=confb.commons.banksite
-            str += " * {0} {1} {2}\n".format(bankname,banksite,inifile)
+            #bankini=os.path.basename(confb.inifile)
+            #str += " * {0} {1} ({2})\n".format(bankname,banksite,bankini)
+            if confb.commons.description:
+                str += " * `{0}`_ ({4}). **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname, banksite,confb.commons.statementfilename, bank,confb.commons.description)
+            else:
+                str += " * `{0}`_. **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname,banksite,confb.commons.statementfilename,bank)
+
         str += "\n"
         return  str
 
@@ -192,7 +193,7 @@ class MyBuild:
 
     def write_file(self,className,lines):
         # Генерация файлов
-        filename = self.rootdir + className.lower() + ".py"
+        filename = os.path.join(SRCDIR,className.lower() + ".py")
         stline = open(filename, "w", encoding='utf-8')
         stline.write("# Generate automatically by build.py\n")
         stline.write("# don`t change manually\n\n")

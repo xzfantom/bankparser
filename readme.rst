@@ -34,17 +34,14 @@ out_file_name
 Настроенные банки
 -----------------
 
-* ВТБ24 - vtb24.ini (http://vtb24.ru)
-
-* Alfadirect (http://alfadirect.ru)
-
-  - отчет о движени бумаг  - adshares.ini
-
 .. banks_start
 
+ * `Альфа-директ`_ (отчет о движении ценных бумаг). **adshares**. Файл выписки report.txt
+    .. _`Альфа-директ`: http://alfadirect.ru
+ * `ВТБ24`_. **vtb24**. Файл выписки statement.csv
+    .. _`ВТБ24`: http://vtb24.ru
 
 .. banks_finish
-
 
 ---------------
 Настройка банка
@@ -73,6 +70,10 @@ banksite
    Ссылка на сайт банка. По умолчанию: None
 bankname
    Название банка. По умолчанию: None
+statementfilename
+   Стандартное имя файла выписки. По умолчанию: None
+description
+   Описание. По умолчанию: None
 
 .. commons_finish
 

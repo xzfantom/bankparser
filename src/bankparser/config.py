@@ -1,11 +1,17 @@
 import configparser
 from bankparser.confcommons import *
+import os.path
+import glob
 
 #configfile='config.ini'
 DEFAULT_CURRENCY = 'RUB'
 
+SRCDIR = "src/bankparser/"
+
 class BankConfig:
-        _isreadini = False
+        #_isreadini = False
+        bank = ""
+        inifile = ""
         commons = ConfCommons()
 
         # delimiter = ';'
@@ -18,25 +24,55 @@ class BankConfig:
         accounts= {}
         actions = {}
 
-        def clear(self):
-                self._isreadini = False
+        def _getinifile(self):
+                bankinifile = self.bank + ".ini"
+                paths = self._get_ini_paths()
+                for path in paths:
+                        bankinifile_src = os.path.join(SRCDIR, bankinifile)
+                        if os.path.exists(bankinifile_src):
+                                return bankinifile_src
+                return None
+
+        def _get_ini_paths(self):
+                paths=("",SRCDIR)
+                return paths
+
+        def get_list_banks(self):
+                listpaths = self._get_ini_paths()
+                for path in listpaths:
+                        banks=None
+                        banks = self._get_list_banks_in_dir(path)
+                        if banks:
+                                return banks
+                return None
+
+        def _get_list_banks_in_dir(self,dir):
+                mask = os.path.join(dir, "*.ini")
+                listbanks = []
+                for file in glob.glob(mask):
+                        inifile = os.path.basename(file)
+                        bank = os.path.splitext(inifile)[0]
+                        listbanks.append(bank)
+                return listbanks
 
         def readini(self,bank):
-                if not self._isreadini:
+                if self.bank != bank:
+                        self.commons=ConfCommons()
                         self.bank=bank
-                        bankinifile=bank+".ini"
+                        bankinifile=self._getinifile()
+                        self.inifile=bankinifile
                         settings = configparser.ConfigParser()
-                        # settings=\
                         settings.read(bankinifile, encoding='utf-8')
-                        # Список имен полей BankConfig
-                        objfields = [arg for arg in dir(ConfCommons) if not arg.startswith('_')]
-                        # Чтение общих настроек банка
-                        for field in objfields:
-                                defaultvalue=getattr(self.commons,field)
-                                inivalue=settings["common"].get(field, defaultvalue)
-                                setattr(self.commons, field, inivalue)
-                        # Список полей в массив
-                        self.commons.fields = self.commons.fields.split(' ')
+                        if 'common' in settings.sections():
+                                # Список имен полей BankConfig
+                                objfields = [arg for arg in dir(ConfCommons) if not arg.startswith('_')]
+                                # Чтение общих настроек банка
+                                for field in objfields:
+                                        defaultvalue=getattr(self.commons,field)
+                                        inivalue=settings["common"].get(field, defaultvalue)
+                                        setattr(self.commons, field, inivalue)
+                                # Список полей в массив
+                                self.commons.fields = self.commons.fields.split(' ')
                         # Чтение спика счетов
                         if 'accounts' in settings.sections():
                                 for key in settings['accounts']:
@@ -46,7 +82,7 @@ class BankConfig:
                                 for key in settings['actions']:
                                         self.actions[key] = settings['actions'][key]
 
-                        self._isreadini=True
+
 
         def printdeb(self):
                 # Список имен полей BankConfig
