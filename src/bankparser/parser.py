@@ -17,7 +17,7 @@ class StatementParser():
     def __init__(self,bank,fin):
         self.confbank = getBankConfig(bank)
         if type(fin)==str:
-            encoding = self.confbank.commons.encoding
+            encoding = getattr(self.confbank.commons,FIELD_ENCODING[CNAME])
             f = open(fin, 'r', encoding=encoding)
             self.fin=f
         else:
@@ -25,7 +25,7 @@ class StatementParser():
         self.statement = Statement()
         self.bank = bank
         self.statement.bank=bank
-        self.statement.type=self.confbank.commons.type
+        self.statement.type=getattr(self.confbank.commons,FIELD_TYPE[CNAME])
 
 
     def parse(self):
@@ -46,7 +46,7 @@ class StatementParser():
         #dialect=csv.Dialect()
         #dialect.delimiter=self.__confbank.get('delimiter',';')
 
-        startafter = self.confbank.commons.startafter
+        startafter = getattr(self.confbank.commons,FIELD_STARTAFTER[CNAME])
         if startafter:
             flag = 0
             strFile = []
@@ -58,8 +58,9 @@ class StatementParser():
                 if line.startswith(startafter): flag = 1
             self.fin=strFile
 
-        fields=self.confbank.commons.fields
-        return csv.DictReader(self.fin, delimiter=self.confbank.commons.delimiter, fieldnames=fields)
+        fields= getattr(self.confbank.commons,FIELD_FIELDS[CNAME])
+        bdelimiter=getattr(self.confbank.commons,FIELD_DELIMITER[CNAME])
+        return csv.DictReader(self.fin, delimiter=bdelimiter, fieldnames=fields)
 
     def parse_record(self,line):
         #print(line)
@@ -77,17 +78,17 @@ class StatementParser():
                 if list:
                     rawvalue = list.get(rawvalue,rawvalue)
                 # Подстановка знака для суммы если он есть
-                if field==FIELD_AMOUNT['name']:
-                    list = getattr(bankconfig, FIELD_AMOUNTSIGN['name'], None)
+                if field==FIELD_AMOUNT[CNAME]:
+                    list = getattr(bankconfig, FIELD_AMOUNTSIGN[CNAME], None)
                     if list:
-                        sign=list.get(line[FIELD_AMOUNTSIGN['name']],'')
+                        sign=list.get(line[FIELD_AMOUNTSIGN[CNAME]],'')
                         rawvalue=sign + rawvalue
                 value = self.parse_value(rawvalue, field)
                 # if field=='action':
                 #     value=self.confbank.actions.get(value.lower(),value)
                 setattr(sl, field, value)
         if self.cur_record==1:
-            self.statement.account=sl.account
+            self.statement.account=getattr(sl,FIELD_ACCOUNT[CNAME])
         return sl
 
 
@@ -107,7 +108,7 @@ class StatementParser():
 
 
     def parse_datetime(self, value):
-        date_format=self.confbank.commons.dateformat
+        date_format=getattr(self.confbank.commons,FIELD_DATEFORMAT[CNAME])
         return datetime.strptime(value, date_format)
 
     def parse_float(self, value):

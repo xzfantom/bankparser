@@ -27,13 +27,24 @@ class MyBuild:
         with open(self.fieldsfile,"r",encoding="utf-8") as f:
             self.fields.append(FIELD_AMOUNT)
             self.fields.append(FIELD_AMOUNTSIGN)
+            self.fields.append(FIELD_ACCOUNT)
             csvfields = list(csv.DictReader(f, delimiter=";"))
             for field in csvfields:
                 self.fields.append(field) #=list(fields)
 
 
         with open(self.commonfile,"r",encoding="utf-8") as f:
-            self.commons = list(csv.DictReader(f, delimiter="|"))
+            self.commons.append(FIELD_DELIMITER)
+            self.commons.append(FIELD_STARTAFTER)
+            self.commons.append(FIELD_DATEFORMAT)
+            self.commons.append(FIELD_ENCODING)
+            self.commons.append(FIELD_FIELDS)
+            self.commons.append(FIELD_TYPE)
+            csvfields = list(csv.DictReader(f, delimiter=";"))
+            for field in csvfields:
+                self.commons.append(field) #=list(fields)
+
+
 
 
 
@@ -159,9 +170,9 @@ class MyBuild:
         """
         str=[]
         str+="\n"
-        str+="Описание настроек секции [common]: \n\n"
+        str+="Описание настроек секции [{}]: \n\n".format(CCOMMON)
         for field in self.commons:
-            str+=field['name']+"\n"
+            str+=field[CNAME]+"\n"
             if field['description'].startswith("Обязательное поле"):
                 str += "   {0}\n".format(field['description'])
             else:
@@ -182,7 +193,7 @@ class MyBuild:
         str+="\n"
         str+="Описание полей: \n\n"
         for field in self.fields:
-            str+=field['name']+"\n"
+            str+=field[CNAME]+"\n"
 
             str += "   {0}. Тип поля: {1}\n".format(field['description'],field['type'])
             #str += "   Тип поля: {0}\n\n".format(field['type'])
@@ -197,7 +208,7 @@ class MyBuild:
         str+="class {}:\n\n".format(className)
         for field in self.commons:
 
-             str += "   {0} = {1} # {2}\n".format(field['name'], field['default'], field['description'])
+             str += "   {0} = {1} # {2}\n".format(field[CNAME], field['default'], field['description'])
         return str
 
     def write_file(self,className,lines):
@@ -221,7 +232,7 @@ class MyBuild:
         for field in self.fields:
             typestr = self.typemap.get(field['type'], field['type'])
             if className.lower() == 'statementline' or field['qif_letter'] != "":
-                str += "   {0} = {1} # {2}\n".format(field['name'], typestr, field['description'])
+                str += "   {0} = {1} # {2}\n".format(field[CNAME], typestr, field['description'])
 
         if className.lower() == 'qifline':
             #stline.write('   qifletters = {')
@@ -233,7 +244,7 @@ class MyBuild:
                     if qstr != "":
                         qstr+=", "
 
-                    qstr+= "'{0}': '{1}'".format(field['name'], field['qif_letter'])
+                    qstr+= "'{0}': '{1}'".format(field[CNAME], field['qif_letter'])
             qstr+="}"
             qstr='\n\nqifletters = {' + qstr
             str += qstr

@@ -3,32 +3,31 @@ from bankparser.confcommons import *
 import os.path
 import glob
 
-#configfile='config.ini'
 DEFAULT_CURRENCY = 'RUB'
 
 SRCDIR = "src/bankparser/"
 
+CNAME = 'name'
+CCOMMON = 'common'
+
 # Обязательные поля для добавления
-FIELD_AMOUNT = {'name':'amount','type':'float','description':'Сумма','qif_letter':'T'}
-FIELD_AMOUNTSIGN = {'name':'amountsign','type':'string','description':'Слово указание на списание или зачисление, для определения знака суммы','qif_letter':''}
+FIELD_AMOUNT = {CNAME:'amount','type':'float','description':'Сумма','qif_letter':'T'}
+FIELD_AMOUNTSIGN = {CNAME:'amountsign','type':'string','description':'Слово указание на списание или зачисление, для определения знака суммы','qif_letter':''}
+FIELD_ACCOUNT = {CNAME:'account','type':'string','description':'Счет','qif_letter':''}
+
+# Поля commons
+FIELD_DELIMITER={CNAME: 'delimiter','default':'";"','description':'Разделитель полей'}
+FIELD_DATEFORMAT={CNAME: 'dateformat','default':'"%Y-%m-%d %H:%M:%S"','description':'Формат даты в банковском файле'}
+FIELD_ENCODING={CNAME: 'encoding','default':'"utf-8"','description':'Кодировка файла'}
+FIELD_FIELDS={CNAME: 'fields','default':'[]','description':'Имена полей в файле через пробел, нужные поля должны совпадать с именем в описанни доступных полей'}
+FIELD_STARTAFTER={CNAME: 'startafter','default':'None','description':'Начинать разбор строк со следующей, после стоки начинающейся с указанных символов'}
+FIELD_TYPE={CNAME: 'type','default':'"Bank"','description':'Тип выписки: Bank или Invst (обычная или операции с ценными бумагами)'}
 
 class BankConfig:
         #_isreadini = False
         bank = ""
         inifile = ""
         commons = ConfCommons()
-
-        # delimiter = ';'
-        # bank = ""
-        # encoding = "utf-8"
-        # startafter = None
-        # type = "Bank"
-        # fields = []
-        # dateformat = "%Y-%m-%d %H:%M:%S"
-        #accounts= {}
-        #actions = {}
-        #amountsigns = {}
-
 
         def _getinifile(self):
                 bankinifile = self.bank + ".ini"
@@ -66,23 +65,25 @@ class BankConfig:
                         self.commons=ConfCommons()
                         self.bank=bank
                         bankinifile=self._getinifile()
+                        if not bankinifile:
+                                raise FileNotFoundError ("Не найден ini для банка {}".format(bank))
                         #print('bankini='.format(bankinifile))
                         self.inifile=bankinifile
                         settings = configparser.ConfigParser()
                         settings.read(bankinifile, encoding='utf-8')
-                        if 'common' in settings.sections():
+                        if CCOMMON in settings.sections():
                                 # Список имен полей BankConfig
                                 objfields = [arg for arg in dir(ConfCommons) if not arg.startswith('_')]
                                 # Чтение общих настроек банка
                                 for field in objfields:
                                         defaultvalue=getattr(self.commons,field)
-                                        inivalue=settings["common"].get(field, defaultvalue)
+                                        inivalue=settings[CCOMMON].get(field, defaultvalue)
                                         setattr(self.commons, field, inivalue)
                                 # Список полей в массив
                                 self.commons.fields = self.commons.fields.split(' ')
                         # Чтение спика счетов
                         for section in settings.sections():
-                                if section != 'common':
+                                if section != CCOMMON:
 
 
                                         list = {}
@@ -92,21 +93,6 @@ class BankConfig:
                                                 #self.accounts[key] = settings[section][key]
                                                 list[key] = settings[section][key]
                                         setattr(self, section, list)
-
-                        # if 'accounts' in settings.sections():
-                        #         setattr(self,'accounts',{})
-                        #         for key in settings['accounts']:
-                        #                   self.accounts[key] = settings['accounts'][key]
-                        # # Чтение спика знаков
-                        # if 'amountsigns' in settings.sections():
-                        #         for key in settings['amountsigns']:
-                        #                   self.amountsigns[key] = settings['amountsigns'][key]
-                        # # Чтение названия операций для ценных бумаг
-                        # if 'actions' in settings.sections():
-                        #         for key in settings['actions']:
-                        #                 self.actions[key] = settings['actions'][key]
-
-
 
         def printdeb(self):
                 # Список имен полей BankConfig

@@ -8,6 +8,7 @@ class StatementLine:
 
    amount = 0.0 # Сумма
    amountsign = "" # Слово указание на списание или зачисление, для определения знака суммы
+   account = "" # Счет
    date = datetime.now() # Дата проводки
    account = "" # Счет
    description = "" # Описание
