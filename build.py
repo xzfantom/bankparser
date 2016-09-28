@@ -6,6 +6,8 @@
 import csv
 import glob
 import shutil
+import os
+from bankparser.config import *
 
 class MyBuild:
 
@@ -37,7 +39,9 @@ class MyBuild:
         #self.gen_fields_file('StatementLine')
         self.write_files()
         print("readme generation...")
-        self.readme_replace()
+        self.readme_replace("commons")
+        self.readme_replace("fields")
+        self.readme_replace("banks")
         self.copy_script()
 
     def write_files(self):
@@ -89,27 +93,53 @@ class MyBuild:
         with open(self.pubdir + bank +".bat", "w", encoding="cp866") as f:
             f.writelines(batstr)
 
-    def readme_replace(self):
+
+    def readme_replace(self,blockname):
+        startblock=".. {}_start\n".format(blockname)
+        endblock=".. {}_finish\n".format(blockname)
+
         with open('readme.rst','r',encoding='utf-8') as f:
             filelines = f.readlines()
         newlines=[]
         readline=True
         for line in filelines:
-            if line == ".. fields_finish\n" or line == ".. commons_finish\n":
+            if line == endblock:
                 readline = True
             if readline:
                 newlines += line
-            if line == ".. fields_start\n":
+            if line == startblock:
                 readline = False
-                newlines+=self.get_help_fields()
-            if line == ".. commons_start\n":
-                readline = False
-                newlines += self.get_help_commons()
-                #insert help
+                newlines+=self.get_help(blockname)
+
 
         with open('readme.rst','w',encoding='utf-8') as f:
             f.writelines(newlines)
 
+
+    def get_help(self,blockname):
+        if blockname == "commons":
+            return self.get_help_commons()
+        elif blockname == "fields":
+            return self.get_help_fields()
+        elif blockname == "banks":
+            return self.get_help_banks()
+
+    def get_help_banks(self):
+        # Получить список ini файлов
+        mask = self.rootdir + "*.ini"
+        str = []
+        str += "\n"
+        for file in glob.glob(mask):
+            inifile=os.path.basename(file)
+            bank = os.path.splitext(inifile)[0]
+            #bank=os.path.splitext(file)[0]
+            bankconfig.clear()
+            confb=getBankConfig(bank)
+            bankname=confb.commons.bankname
+            banksite=confb.commons.banksite
+            str += " * {0} {1} {2}\n".format(bankname,banksite,inifile)
+        str += "\n"
+        return  str
 
     def get_help_commons(self):
         """
@@ -205,3 +235,4 @@ class MyBuild:
 
 mybuild = MyBuild()
 mybuild.gen_files()
+mybuild.get_help_banks()

@@ -20,7 +20,7 @@ bankparser
 -------------
 ::
 
- bankparser bank_name in_file_name [----outfile out_file_name]
+ bankparser bank_name in_file_name [--outfile out_file_name]
 
 bank_name
   Имя банка - это имя ini файла с настройками банка
@@ -35,8 +35,16 @@ out_file_name
 -----------------
 
 * ВТБ24 - vtb24.ini (http://vtb24.ru)
+
 * Alfadirect (http://alfadirect.ru)
+
   - отчет о движени бумаг  - adshares.ini
+
+.. banks_start
+
+
+.. banks_finish
+
 
 ---------------
 Настройка банка
@@ -61,6 +69,10 @@ fields
    Обязательное поле. Имена полей в файле через пробел, нужные поля должны совпадать с именем в описанни доступных полей
 dateformat
    Формат даты в банковском файле. По умолчанию: '%Y-%m-%d %H:%M:%S'
+banksite
+   Ссылка на сайт банка. По умолчанию: None
+bankname
+   Название банка. По умолчанию: None
 
 .. commons_finish
 

@@ -1,7 +1,7 @@
 import configparser
 from bankparser.confcommons import *
 
-configfile='config.ini'
+#configfile='config.ini'
 DEFAULT_CURRENCY = 'RUB'
 
 class BankConfig:
@@ -17,6 +17,9 @@ class BankConfig:
         # dateformat = "%Y-%m-%d %H:%M:%S"
         accounts= {}
         actions = {}
+
+        def clear(self):
+                self._isreadini = False
 
         def readini(self,bank):
                 if not self._isreadini:
