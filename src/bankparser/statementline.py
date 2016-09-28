@@ -6,11 +6,12 @@ from datetime import datetime
 
 class StatementLine:
 
+   amount = 0.0 # Сумма
+   amountsign = "" # Слово указание на списание или зачисление, для определения знака суммы
    date = datetime.now() # Дата проводки
    account = "" # Счет
-   amount = 0.0 # Сумма
    description = "" # Описание
-   action = "" # Операция (для ценных бумаг): buy, sell
+   action = "" # Операция (для ценных бумаг): buy, sell. Для приведения к стандартным операциям используйте секцию [action]. Например [action] Покупка=buy
    securityname = "" # Имя ценной бумаги
    price = 0.0 # Цена (для ценных бумаг)
    quantity = 0.0 # Количество бумаг 

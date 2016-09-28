@@ -1,9 +1,8 @@
 name;type;description;qif_letter
 date;date;Дата проводки;D
 account;string;Счет;
-amount;float;Сумма;T
 description;string;Описание;P
-action;string;Операция (для ценных бумаг): buy, sell;N
+action;string;Операция (для ценных бумаг): buy, sell. Для приведения к стандартным операциям используйте секцию [action]. Например [action] Покупка=buy;N
 securityname;string;Имя ценной бумаги;Y
 price;float;Цена (для ценных бумаг);I
 quantity;float;Количество бумаг ;Q

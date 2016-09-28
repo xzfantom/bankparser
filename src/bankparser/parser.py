@@ -72,13 +72,22 @@ class StatementParser():
         for field in objfields:
             if field in inifields:
                 rawvalue = line[field]
+                # Подмена значения из списка настроек, если список есть в настр. банка
+                list = getattr(bankconfig,field,None)
+                if list:
+                    rawvalue = list.get(rawvalue,rawvalue)
+                # Подстановка знака для суммы если он есть
+                if field==FIELD_AMOUNT['name']:
+                    list = getattr(bankconfig, FIELD_AMOUNTSIGN['name'], None)
+                    if list:
+                        sign=list.get(line[FIELD_AMOUNTSIGN['name']],'')
+                        rawvalue=sign + rawvalue
                 value = self.parse_value(rawvalue, field)
-                # self.field=value
-                if field=='action':
-                    value=self.confbank.actions.get(value.lower(),value)
+                # if field=='action':
+                #     value=self.confbank.actions.get(value.lower(),value)
                 setattr(sl, field, value)
         if self.cur_record==1:
-            self.statement.account=self.confbank.accounts.get(sl.account,sl.account)
+            self.statement.account=sl.account
         return sl
 
 

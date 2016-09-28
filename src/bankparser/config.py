@@ -8,6 +8,10 @@ DEFAULT_CURRENCY = 'RUB'
 
 SRCDIR = "src/bankparser/"
 
+# Обязательные поля для добавления
+FIELD_AMOUNT = {'name':'amount','type':'float','description':'Сумма','qif_letter':'T'}
+FIELD_AMOUNTSIGN = {'name':'amountsign','type':'string','description':'Слово указание на списание или зачисление, для определения знака суммы','qif_letter':''}
+
 class BankConfig:
         #_isreadini = False
         bank = ""
@@ -21,14 +25,16 @@ class BankConfig:
         # type = "Bank"
         # fields = []
         # dateformat = "%Y-%m-%d %H:%M:%S"
-        accounts= {}
-        actions = {}
+        #accounts= {}
+        #actions = {}
+        #amountsigns = {}
+
 
         def _getinifile(self):
                 bankinifile = self.bank + ".ini"
                 paths = self._get_ini_paths()
                 for path in paths:
-                        bankinifile_src = os.path.join(SRCDIR, bankinifile)
+                        bankinifile_src = os.path.join(path, bankinifile)
                         if os.path.exists(bankinifile_src):
                                 return bankinifile_src
                 return None
@@ -60,6 +66,7 @@ class BankConfig:
                         self.commons=ConfCommons()
                         self.bank=bank
                         bankinifile=self._getinifile()
+                        #print('bankini='.format(bankinifile))
                         self.inifile=bankinifile
                         settings = configparser.ConfigParser()
                         settings.read(bankinifile, encoding='utf-8')
@@ -74,13 +81,30 @@ class BankConfig:
                                 # Список полей в массив
                                 self.commons.fields = self.commons.fields.split(' ')
                         # Чтение спика счетов
-                        if 'accounts' in settings.sections():
-                                for key in settings['accounts']:
-                                          self.accounts[key] = settings['accounts'][key]
-                        # Чтение названия операций для ценных бумаг
-                        if 'actions' in settings.sections():
-                                for key in settings['actions']:
-                                        self.actions[key] = settings['actions'][key]
+                        for section in settings.sections():
+                                if section != 'common':
+
+
+                                        list = {}
+
+                                        for key in settings[section]:
+                                                #setattr(self,section,)
+                                                #self.accounts[key] = settings[section][key]
+                                                list[key] = settings[section][key]
+                                        setattr(self, section, list)
+
+                        # if 'accounts' in settings.sections():
+                        #         setattr(self,'accounts',{})
+                        #         for key in settings['accounts']:
+                        #                   self.accounts[key] = settings['accounts'][key]
+                        # # Чтение спика знаков
+                        # if 'amountsigns' in settings.sections():
+                        #         for key in settings['amountsigns']:
+                        #                   self.amountsigns[key] = settings['amountsigns'][key]
+                        # # Чтение названия операций для ценных бумаг
+                        # if 'actions' in settings.sections():
+                        #         for key in settings['actions']:
+                        #                 self.actions[key] = settings['actions'][key]
 
 
 

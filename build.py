@@ -25,8 +25,13 @@ class MyBuild:
 
     def __init__(self):
         with open(self.fieldsfile,"r",encoding="utf-8") as f:
-            fields = csv.DictReader(f, delimiter=";")
-            self.fields=list(fields)
+            self.fields.append(FIELD_AMOUNT)
+            self.fields.append(FIELD_AMOUNTSIGN)
+            csvfields = list(csv.DictReader(f, delimiter=";"))
+            for field in csvfields:
+                self.fields.append(field) #=list(fields)
+
+
         with open(self.commonfile,"r",encoding="utf-8") as f:
             self.commons = list(csv.DictReader(f, delimiter="|"))
 
