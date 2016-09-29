@@ -13,7 +13,10 @@ class MyBuild:
 
 
     ffields =None
-    #pubdir = "c:/temp/andrey/bankparser/"
+    pubdir = "c:/temp/andrey/bankparser/"
+    downloadsdir = "c:/Users/Пользователь/Downloads/"
+
+
 
     typemap={'date':'datetime.now()','string':"\"\"",'float':'0.0'}
 
@@ -24,89 +27,173 @@ class MyBuild:
     #fieldsinfields=["name","type","description","qif_letter"]
 
     def __init__(self):
+        self.fields.append(FIELD_AMOUNT)
+        self.fields.append(FIELD_AMOUNTSIGN)
+        self.fields.append(FIELD_ACCOUNT)
         with open(self.fieldsfile,"r",encoding="utf-8") as f:
-            self.fields.append(FIELD_AMOUNT)
-            self.fields.append(FIELD_AMOUNTSIGN)
-            self.fields.append(FIELD_ACCOUNT)
             csvfields = list(csv.DictReader(f, delimiter=";"))
             for field in csvfields:
                 self.fields.append(field) #=list(fields)
 
-
+        self.commons.append(FIELD_DELIMITER)
+        self.commons.append(FIELD_STARTAFTER)
+        self.commons.append(FIELD_DATEFORMAT)
+        self.commons.append(FIELD_ENCODING)
+        self.commons.append(FIELD_FIELDS)
+        self.commons.append(FIELD_TYPE)
         with open(self.commonfile,"r",encoding="utf-8") as f:
-            self.commons.append(FIELD_DELIMITER)
-            self.commons.append(FIELD_STARTAFTER)
-            self.commons.append(FIELD_DATEFORMAT)
-            self.commons.append(FIELD_ENCODING)
-            self.commons.append(FIELD_FIELDS)
-            self.commons.append(FIELD_TYPE)
             csvfields = list(csv.DictReader(f, delimiter=";"))
             for field in csvfields:
                 self.commons.append(field) #=list(fields)
 
-
-
-
-
-
     def gen_files(self):
         #self.gen_fields_file('QIFLine')
         #self.gen_fields_file('StatementLine')
-        self.write_files()
+        self.gen_classfiles()
         print("readme generation...")
         self.readme_replace("commons")
         self.readme_replace("fields")
         self.readme_replace("banks")
-        #self.copy_script()
+        self.copy_script()
 
-    def write_files(self):
+    def gen_classfiles(self):
 
-        className='StatementLine'
-        print("{} generation...".format(className))
-        str = self.get_statement_str(className)
-        self.write_file(className, str)
-        className = 'QIFLine'
-        print("{} generation...".format(className))
-        str = self.get_statement_str(className)
-        self.write_file(className, str)
-        className = "ConfCommons"
-        print("{} generation...".format(className))
-        str = self.get_commons_str(className)
-        self.write_file(className, str)
+        classNames = ['StatementLine', 'QIFLine', 'ConfCommons']
+        for className in classNames:
+            print("{} generation...".format(className))
+            str = self.get_class_str(className)
+            filename = os.path.join(SRCDIR, className.lower() + ".py")
+            self.write_file(filename, str)
 
-    # def copy_script(self):
+    def get_class_str(self,className):
+        strclass = []
+        strclass += "class {}:\n\n".format(className)
+        if className=='StatementLine':
+            strclass.insert(0,"from datetime import datetime\n\n\n")
+            #strclass = "from datetime import datetime\n\n\n" + strclass
+            #strclass += "class {}:\n\n".format(className)
+            for field in self.fields:
+                typestr = self.typemap.get(field['type'], field['type'])
+                strclass += "   {0} = {1} # {2}\n".format(field[CNAME], typestr, field['description'])
+        elif className == 'QIFLine':
+            #strclass += "from datetime import datetime\n\n\n"
+            #strclass = "from datetime import datetime\n\n\n" + strclass
+            #strclass += "class {}:\n\n".format(className)
+            strqiflet = []
+            for field in self.fields:
+                if field['qif_letter'] != "":
+                    typestr = self.typemap.get(field['type'], field['type'])
+                    strclass += "   {0} = {1} # {2}\n".format(field[CNAME], typestr, field['description'])
+                    if strqiflet != "":
+                        strqiflet += ", "
+                    strqiflet += "'{0}': '{1}'".format(field[CNAME], field['qif_letter'])
+            strqiflet = '\n\nqifletters = {' + str(strqiflet) + '}'
+            strclass += strqiflet
+        elif className == 'ConfCommons':
+            #strclass += "class {}:\n\n".format(className)
+            for field in self.commons:
+                strclass += "   {0} = {1} # {2}\n".format(field[CNAME], field['default'], field['description'])
+
+        else:
+            raise ('Неизвестый класс для генерации')
+        return strclass
+
+
+    # def get_commons_str(self,className):
+    #     str=[]
+    #     #f.write("from datetime import datetime\n\n\n")
+    #     str+="class {}:\n\n".format(className)
+    #     for field in self.commons:
     #
+    #          str += "   {0} = {1} # {2}\n".format(field[CNAME], field['default'], field['description'])
+    #     return str
     #
-    #     # libs
-    #     dest_dir = self.pubdir + "bankparser"
-    #     mask=os.path.join(SRCDIR, "*.py")
-    #     for file in glob.glob(mask):
-    #         print("copyng file {}".format(file))
-    #         shutil.copy(file, dest_dir)
-    #     # rootfile
-    #     rootfile=os.path.join(SRCDIR, "bankparsercli.py")
-    #     dest_dir = self.pubdir
-    #     print("copyng file {}".format(rootfile))
-    #     shutil.copy(rootfile, dest_dir)
-    #     # ini files
-    #     mask = os.path.join(SRCDIR, "*.ini")
-    #     for file in glob.glob(mask):
-    #         print("copyng file {}".format(file))
-    #         shutil.copy(file, dest_dir)
-    #     # generate bat vtb24
-    #     self.save_bat("statement.csv","vtb24")
-    #     self.save_bat("report.txt","adshares")
+    # def get_statement_str(self,className):
+    #     str = []
+    #     str += "from datetime import datetime\n\n\n"
+    #     str += "class {}:\n\n".format(className)
+    #     for field in self.fields:
+    #         typestr = self.typemap.get(field['type'], field['type'])
+    #         if className.lower() == 'statementline' or field['qif_letter'] != "":
+    #             str += "   {0} = {1} # {2}\n".format(field[CNAME], typestr, field['description'])
+    #
+    #     if className.lower() == 'qifline':
+    #         #stline.write('   qifletters = {')
+    #         #self.ffields.seek(0)
+    #         qstr = ""
+    #         for field in self.fields:
+    #
+    #             if field['qif_letter'] != "":
+    #                 if qstr != "":
+    #                     qstr+=", "
+    #
+    #                 qstr+= "'{0}': '{1}'".format(field[CNAME], field['qif_letter'])
+    #         qstr+="}"
+    #         qstr='\n\nqifletters = {' + qstr
+    #         str += qstr
+    #     return str
 
 
-    # def save_bat(self,filetomove,bank):
-    #     downloadsfolder= "c:\\Users\\Пользователь\\Downloads\\" + filetomove
-    #     batstr = []
-    #     destsl = self.pubdir.replace('/', '\\') + filetomove
-    #     batstr += "move {0} {1}\n".format(downloadsfolder,destsl)
-    #     batstr += "python.exe bankparsercli.py {0} {1}\n".format(bank,filetomove)
-    #     batstr += "pause\n"
-    #     with open(self.pubdir + bank +".bat", "w", encoding="cp866") as f:
-    #         f.writelines(batstr)
+    def write_file(self, filename, lines,encoding='utf-8',commentchar='#'):
+        with open(filename, "w", encoding=encoding) as f:
+            f.writelines(self.get_header(commentchar))
+            f.writelines(lines)
+
+    def copy_script(self):
+
+
+        # libs
+        dest_dir = self.pubdir + "bankparser"
+        mask=os.path.join(SRCDIR, "*.py")
+        for file in glob.glob(mask):
+            print("copyng file {}".format(file))
+            shutil.copy(file, dest_dir)
+        # rootfile
+        rootfile=os.path.join(SRCDIR, "bankparsercli.py")
+        dest_dir = self.pubdir
+        print("copyng file {}".format(rootfile))
+        shutil.copy(rootfile, os.path.join(dest_dir,'bankparser.py'))
+        # ini files
+        mask = os.path.join(SRCDIR, "*.ini")
+        for file in glob.glob(mask):
+            print("copyng file {}".format(file))
+            shutil.copy(file, dest_dir)
+        # generate bat vtb24
+        banks=bankconfig.get_list_banks()
+        for bank in banks:
+            bankconfig.readini(bank)
+            bankfile=bankconfig.commons.statementfilename
+            self.save_bat(bankfile,bank)
+        #self.save_bat("statement.csv","vtb24")
+        #self.save_bat("report.txt","adshares")
+
+
+    def save_bat(self,filetomove,bank):
+        batstr = []
+        batstr += "@echo off\n"
+        batstr += self.get_header('rem')
+        batstr += "set bankfile={}\n".format(filetomove)
+        batstr += "set bank={}\n".format(bank)
+        batstr += "set downloadsdir={}\n".format(self.downloadsdir.replace('/', '\\'))
+        batstr += "set curdir=%~dp0\n\n"
+        batstr += "\n"
+
+        batstr += "move %downloadsdir%%bankfile% %curdir%%bankfile%\n"
+        batstr += "python.exe bankparser.py %bank% %curdir%%bankfile%\n".format(bank,filetomove)
+        batstr += "pause\n"
+
+        filename=os.path.join(self.pubdir, bank +".bat")
+
+        #self.write_file(filename,batstr,encoding='cp866',commentchar='rem')
+
+        with open(filename, "w", encoding="cp866") as f:
+            f.writelines(batstr)
+
+    def get_header(self,commentchar='#'):
+        headerstr=[]
+        headerstr += "{} Generate automatically by build.py\n".format(commentchar)
+        headerstr += "{} don`t change manually\n\n".format(commentchar)
+        return headerstr
 
 
     def readme_replace(self,blockname):
@@ -202,53 +289,6 @@ class MyBuild:
 
         return str
 
-    def get_commons_str(self,className):
-        str=[]
-        #f.write("from datetime import datetime\n\n\n")
-        str+="class {}:\n\n".format(className)
-        for field in self.commons:
-
-             str += "   {0} = {1} # {2}\n".format(field[CNAME], field['default'], field['description'])
-        return str
-
-    def write_file(self,className,lines):
-        # Генерация файлов
-        filename = os.path.join(SRCDIR,className.lower() + ".py")
-        stline = open(filename, "w", encoding='utf-8')
-        stline.write("# Generate automatically by build.py\n")
-        stline.write("# don`t change manually\n\n")
-        stline.writelines(lines)
-        stline.close()
-
-
-
-
-
-
-    def get_statement_str(self,className):
-        str = []
-        str += "from datetime import datetime\n\n\n"
-        str += "class {}:\n\n".format(className)
-        for field in self.fields:
-            typestr = self.typemap.get(field['type'], field['type'])
-            if className.lower() == 'statementline' or field['qif_letter'] != "":
-                str += "   {0} = {1} # {2}\n".format(field[CNAME], typestr, field['description'])
-
-        if className.lower() == 'qifline':
-            #stline.write('   qifletters = {')
-            #self.ffields.seek(0)
-            qstr = ""
-            for field in self.fields:
-
-                if field['qif_letter'] != "":
-                    if qstr != "":
-                        qstr+=", "
-
-                    qstr+= "'{0}': '{1}'".format(field[CNAME], field['qif_letter'])
-            qstr+="}"
-            qstr='\n\nqifletters = {' + qstr
-            str += qstr
-        return str
 
 
 

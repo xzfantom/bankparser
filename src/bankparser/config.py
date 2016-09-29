@@ -80,7 +80,10 @@ class BankConfig:
                                         inivalue=settings[CCOMMON].get(field, defaultvalue)
                                         setattr(self.commons, field, inivalue)
                                 # Список полей в массив
-                                self.commons.fields = self.commons.fields.split(' ')
+                                fields = getattr(self.commons,FIELD_FIELDS[CNAME],None)
+                                if fields:
+                                        setattr(self.commons,FIELD_FIELDS[CNAME],fields.split(' '))
+                                #self.commons.fields = self.commons.fields.split(' ')
                         # Чтение спика счетов
                         for section in settings.sections():
                                 if section != CCOMMON:
