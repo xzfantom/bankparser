@@ -1,6 +1,9 @@
 # Generate automatically by build.py
 # don`t change manually
 
+from datetime import datetime
+
+
 class QIFLine:
 
    amount = 0.0 # Сумма
@@ -11,6 +14,9 @@ class QIFLine:
    price = 0.0 # Цена (для ценных бумаг)
    quantity = 0.0 # Количество бумаг 
    commission = 0.0 # Комиссия (для ценных бумаг)
+   payee = "" # Получатель платежа
+   numbercheck = "" # Номер чека (Номер транзакции ?)
+   category = "" # Название счета для списания/зачисления (второй счет проводки). Например, Расходы:Питание
 
 
-qifletters = {[',', ' ', "'", 'a', 'm', 'o', 'u', 'n', 't', "'", ':', ' ', "'", 'T', "'", ',', ' ', "'", 'd', 'a', 't', 'e', "'", ':', ' ', "'", 'D', "'", ',', ' ', "'", 'd', 'e', 's', 'c', 'r', 'i', 'p', 't', 'i', 'o', 'n', "'", ':', ' ', "'", 'P', "'", ',', ' ', "'", 'a', 'c', 't', 'i', 'o', 'n', "'", ':', ' ', "'", 'N', "'", ',', ' ', "'", 's', 'e', 'c', 'u', 'r', 'i', 't', 'y', 'n', 'a', 'm', 'e', "'", ':', ' ', "'", 'Y', "'", ',', ' ', "'", 'p', 'r', 'i', 'c', 'e', "'", ':', ' ', "'", 'I', "'", ',', ' ', "'", 'q', 'u', 'a', 'n', 't', 'i', 't', 'y', "'", ':', ' ', "'", 'Q', "'", ',', ' ', "'", 'c', 'o', 'm', 'm', 'i', 's', 's', 'i', 'o', 'n', "'", ':', ' ', "'", 'O', "'"]}
+qifletters = {'amount': 'T', 'date': 'D', 'description': 'M', 'action': 'N', 'securityname': 'Y', 'price': 'I', 'quantity': 'Q', 'commission': 'O', 'payee': 'P', 'numbercheck': 'N', 'category': 'L'}

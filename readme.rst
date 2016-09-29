@@ -125,8 +125,6 @@ account
    Счет. Тип поля: string
 date
    Дата проводки. Тип поля: date
-account
-   Счет. Тип поля: string
 description
    Описание. Тип поля: string
 action
@@ -139,6 +137,12 @@ quantity
    Количество бумаг . Тип поля: float
 commission
    Комиссия (для ценных бумаг). Тип поля: float
+payee
+   Получатель платежа. Тип поля: string
+numbercheck
+   Номер чека (Номер транзакции ?). Тип поля: string
+category
+   Название счета для списания/зачисления (второй счет проводки). Например, Расходы:Питание. Тип поля: string
 
 .. fields_finish
 

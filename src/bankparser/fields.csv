@@ -1,10 +1,11 @@
 name;type;description;qif_letter
 date;date;Дата проводки;D
-account;string;Счет;
-description;string;Описание;P
+description;string;Описание;M
 action;string;Операция (для ценных бумаг): buy, sell. Для приведения к стандартным операциям используйте секцию [action]. Например [action] Покупка=buy;N
 securityname;string;Имя ценной бумаги;Y
 price;float;Цена (для ценных бумаг);I
 quantity;float;Количество бумаг ;Q
 commission;float;Комиссия (для ценных бумаг);O
-
+payee;string;Получатель платежа;P
+numbercheck;string;Номер чека (Номер транзакции ?);N
+category;string;Название счета для списания/зачисления (второй счет проводки). Например, Расходы:Питание;L

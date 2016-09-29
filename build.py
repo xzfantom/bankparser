@@ -76,10 +76,11 @@ class MyBuild:
                 typestr = self.typemap.get(field['type'], field['type'])
                 strclass += "   {0} = {1} # {2}\n".format(field[CNAME], typestr, field['description'])
         elif className == 'QIFLine':
+            strclass.insert(0, "from datetime import datetime\n\n\n")
             #strclass += "from datetime import datetime\n\n\n"
             #strclass = "from datetime import datetime\n\n\n" + strclass
             #strclass += "class {}:\n\n".format(className)
-            strqiflet = []
+            strqiflet = ""
             for field in self.fields:
                 if field['qif_letter'] != "":
                     typestr = self.typemap.get(field['type'], field['type'])
@@ -87,7 +88,7 @@ class MyBuild:
                     if strqiflet != "":
                         strqiflet += ", "
                     strqiflet += "'{0}': '{1}'".format(field[CNAME], field['qif_letter'])
-            strqiflet = '\n\nqifletters = {' + str(strqiflet) + '}'
+            strqiflet = '\n\nqifletters = {' + strqiflet + '}'
             strclass += strqiflet
         elif className == 'ConfCommons':
             #strclass += "class {}:\n\n".format(className)
