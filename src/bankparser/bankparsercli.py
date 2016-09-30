@@ -26,6 +26,8 @@ def main(args=None):
 
     parser=bankparser.parser.StatementParser(args.bank,args.infile)
     parser.parse()
+    count = len(parser.statement.lines)
+    print('Обработано {} строк'.format(count))
 
     qif=QIF(parser.statement)
     #qif.printdeb()

@@ -124,17 +124,17 @@ amountsign
 account
    Счет. Тип поля: string
 date
-   Дата проводки. Тип поля: date
+   Дата проводки. Тип поля: datetime
 description
    Описание. Тип поля: string
 action
-   Операция (для ценных бумаг): buy, sell. Для приведения к стандартным операциям используйте секцию [action]. Например [action] Покупка=buy. Тип поля: string
+   Операция (для ценных бумаг): buy, sell. Для приведения к стандартным операциям используйте секцию [action]. Например [action] Покупка. Тип поля: string
 securityname
    Имя ценной бумаги. Тип поля: string
 price
    Цена (для ценных бумаг). Тип поля: float
 quantity
-   Количество бумаг . Тип поля: float
+   Количество бумаг. Тип поля: float
 commission
    Комиссия (для ценных бумаг). Тип поля: float
 payee
@@ -151,21 +151,38 @@ setup notes
 
 Некоторые файлы и часть справки генерятся автоматом из build.py
 
+Для копирования скрипта без установки и создания .bat для банков (делал для отладочных целей)::
+
+ setup.py copyscript --pubdir каталог_публикации
+
+Для генерации файлов .py и добавления информации в readme.rst::
+
+ setup.py genfiles
+
+Или можно запустить build.py. Он сделает обе эти операции.
+
+Это нужно, что бы одна и таже информаци не хранилась дважды и не дублировалась.
+
+Информация о возможных полях в выписке хранится в файле statementline.py и оттуда попадает
+в qifline.py (только поля для которых задана буква qif)
+и в справку.
+
+Информация полях о настройки банка хранится в confcommons.py и оттуда попадает в справку.
+
+Информация о настроенных банках хранится в *.ini и оттуда попадает в справку.
+
 ::
 
-  fields.csv -> statementline.py
-             -> qifline.py
-             -> readme.rst (.. fields_start  .. fields_finish)
+  statementline.py -> qifline.py
+                   -> readme.rst (.. fields_start  .. fields_finish)
 
-  commons.csv -> confcommons.py
-              -> readme.rst (.. commons_start  .. commons_finish)
+  confcommons.py   -> readme.rst (.. commons_start  .. commons_finish)
 
   *.ini       -> readme.rst (.. banks_start  .. banks_finish)
 
-Для добавления обработки поля выписки его просто нужно добавить в файл fields.csv
+Для добавления обработки поля выписки его нужно добавить в файл statementline.py
 
-Для добавления общей настройки банка его нужно добавить в файл commons.csv. Правда имена полей в последующем
-вызываются из кода не привязанного к commons.csv
+
 
 
 Лицензия

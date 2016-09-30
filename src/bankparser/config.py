@@ -5,23 +5,23 @@ import glob
 
 DEFAULT_CURRENCY = 'RUB'
 
-SRCDIR = "src/bankparser/"
+#SRCDIR = "src/bankparser/"
 
-CNAME = 'name'
+#CNAME = 'name'
 CCOMMON = 'common'
 
 # Обязательные поля для добавления
-FIELD_AMOUNT = {CNAME:'amount','type':'float','description':'Сумма','qif_letter':'T'}
-FIELD_AMOUNTSIGN = {CNAME:'amountsign','type':'string','description':'Слово указание на списание или зачисление, для определения знака суммы','qif_letter':''}
-FIELD_ACCOUNT = {CNAME:'account','type':'string','description':'Счет','qif_letter':''}
+#FIELD_AMOUNT = {CNAME:'amount','type':'float','description':'Сумма','qif_letter':'T'}
+#FIELD_AMOUNTSIGN = {CNAME:'amountsign','type':'string','description':'Слово указание на списание или зачисление, для определения знака суммы','qif_letter':''}
+#FIELD_ACCOUNT = {CNAME:'account','type':'string','description':'Счет','qif_letter':''}
 
 # Поля commons
-FIELD_DELIMITER={CNAME: 'delimiter','default':'";"','description':'Разделитель полей'}
-FIELD_DATEFORMAT={CNAME: 'dateformat','default':'"%Y-%m-%d %H:%M:%S"','description':'Формат даты в банковском файле'}
-FIELD_ENCODING={CNAME: 'encoding','default':'"utf-8"','description':'Кодировка файла'}
-FIELD_FIELDS={CNAME: 'fields','default':'[]','description':'Имена полей в файле через пробел, нужные поля должны совпадать с именем в описанни доступных полей'}
-FIELD_STARTAFTER={CNAME: 'startafter','default':'None','description':'Начинать разбор строк со следующей, после стоки начинающейся с указанных символов'}
-FIELD_TYPE={CNAME: 'type','default':'"Bank"','description':'Тип выписки: Bank или Invst (обычная или операции с ценными бумагами)'}
+#FIELD_DELIMITER={CNAME: 'delimiter','default':'";"','description':'Разделитель полей'}
+#FIELD_DATEFORMAT={CNAME: 'dateformat','default':'"%Y-%m-%d %H:%M:%S"','description':'Формат даты в банковском файле'}
+#FIELD_ENCODING={CNAME: 'encoding','default':'"utf-8"','description':'Кодировка файла'}
+#FIELD_FIELDS={CNAME: 'fields','default':'[]','description':'Имена полей в файле через пробел, нужные поля должны совпадать с именем в описанни доступных полей'}
+#FIELD_STARTAFTER={CNAME: 'startafter','default':'None','description':'Начинать разбор строк со следующей, после стоки начинающейся с указанных символов'}
+#FIELD_TYPE={CNAME: 'type','default':'"Bank"','description':'Тип выписки: Bank или Invst (обычная или операции с ценными бумагами)'}
 
 class BankConfig:
         #_isreadini = False
@@ -39,7 +39,8 @@ class BankConfig:
                 return None
 
         def _get_ini_paths(self):
-                paths=("",SRCDIR)
+                moddir=os.path.dirname(__file__)
+                paths=("",moddir)
                 return paths
 
         def get_list_banks(self):
@@ -80,9 +81,8 @@ class BankConfig:
                                         inivalue=settings[CCOMMON].get(field, defaultvalue)
                                         setattr(self.commons, field, inivalue)
                                 # Список полей в массив
-                                fields = getattr(self.commons,FIELD_FIELDS[CNAME],None)
-                                if fields:
-                                        setattr(self.commons,FIELD_FIELDS[CNAME],fields.split(' '))
+                                self.commons.fields = self.commons.fields.split(' ')
+
                                 #self.commons.fields = self.commons.fields.split(' ')
                         # Чтение спика счетов
                         for section in settings.sections():

@@ -2,7 +2,7 @@
 # don`t change manually
 
 class ConfCommons:
-
+# start_fields description
    delimiter = ";" # Разделитель полей
    startafter = None # Начинать разбор строк со следующей, после стоки начинающейся с указанных символов
    dateformat = "%Y-%m-%d %H:%M:%S" # Формат даты в банковском файле
@@ -13,3 +13,4 @@ class ConfCommons:
    bankname = None # Название банка
    statementfilename = '' # Стандартное имя файла выписки
    description = '' # Описание
+# end_fields

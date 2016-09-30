@@ -3,176 +3,178 @@
 
 """
 
-import csv
 import shutil
-import os.path
-from bankparser.config import *
+import os
+import glob
+import configparser
 
 
 class MyBuild:
 
-
-    ffields =None
+    SRCDIR = 'src/bankparser'
     pubdir = "c:/temp/andrey/bankparser/"
     downloadsdir = "c:/Users/Пользователь/Downloads/"
 
+    def __init__(self, pubdir=None, srcdir=None, downloadsdir=None):
+        if pubdir:
+            self.pubdir = pubdir
+        if srcdir:
+            self.SRCDIR = srcdir
+        if downloadsdir:
+            self.downloadsdir = downloadsdir
 
+    def buid(self):
+        """
+        Автоматизированные операции построения исходников:
+        Генерация файла qifline.py и справки по файлу statementline.py
+        Генерация справки по файлу confcommons.py
+        Генерация справки по банкам, на основе ini файлов в исходниках
 
-    typemap={'date':'datetime.now()','string':"\"\"",'float':'0.0'}
-
-    fieldsfile = os.path.join(SRCDIR, "fields.csv")
-    fields = list()
-    commonfile = os.path.join(SRCDIR, "commons.csv")
-    commons = list()
-    #fieldsinfields=["name","type","description","qif_letter"]
-
-    def __init__(self):
-        self.fields.append(FIELD_AMOUNT)
-        self.fields.append(FIELD_AMOUNTSIGN)
-        self.fields.append(FIELD_ACCOUNT)
-        with open(self.fieldsfile,"r",encoding="utf-8") as f:
-            csvfields = list(csv.DictReader(f, delimiter=";"))
-            for field in csvfields:
-                self.fields.append(field) #=list(fields)
-
-        self.commons.append(FIELD_DELIMITER)
-        self.commons.append(FIELD_STARTAFTER)
-        self.commons.append(FIELD_DATEFORMAT)
-        self.commons.append(FIELD_ENCODING)
-        self.commons.append(FIELD_FIELDS)
-        self.commons.append(FIELD_TYPE)
-        with open(self.commonfile,"r",encoding="utf-8") as f:
-            csvfields = list(csv.DictReader(f, delimiter=";"))
-            for field in csvfields:
-                self.commons.append(field) #=list(fields)
-
-    def gen_files(self):
-        #self.gen_fields_file('QIFLine')
-        #self.gen_fields_file('StatementLine')
-        self.gen_classfiles()
-        print("readme generation...")
-        self.readme_replace("commons")
-        self.readme_replace("fields")
-        self.readme_replace("banks")
-        self.copy_script()
-
-    def gen_classfiles(self):
-
-        classNames = ['StatementLine', 'QIFLine', 'ConfCommons']
-        for className in classNames:
-            print("{} generation...".format(className))
-            str = self.get_class_str(className)
-            filename = os.path.join(SRCDIR, className.lower() + ".py")
-            self.write_file(filename, str)
-
-    def get_class_str(self,className):
-        strclass = []
-        strclass += "class {}:\n\n".format(className)
-        if className=='StatementLine':
-            strclass.insert(0,"from datetime import datetime\n\n\n")
-            #strclass = "from datetime import datetime\n\n\n" + strclass
-            #strclass += "class {}:\n\n".format(className)
-            for field in self.fields:
-                typestr = self.typemap.get(field['type'], field['type'])
-                strclass += "   {0} = {1} # {2}\n".format(field[CNAME], typestr, field['description'])
-        elif className == 'QIFLine':
-            strclass.insert(0, "from datetime import datetime\n\n\n")
-            #strclass += "from datetime import datetime\n\n\n"
-            #strclass = "from datetime import datetime\n\n\n" + strclass
-            #strclass += "class {}:\n\n".format(className)
-            strqiflet = ""
-            for field in self.fields:
-                if field['qif_letter'] != "":
-                    typestr = self.typemap.get(field['type'], field['type'])
-                    strclass += "   {0} = {1} # {2}\n".format(field[CNAME], typestr, field['description'])
-                    if strqiflet != "":
-                        strqiflet += ", "
-                    strqiflet += "'{0}': '{1}'".format(field[CNAME], field['qif_letter'])
-            strqiflet = '\n\nqifletters = {' + strqiflet + '}'
-            strclass += strqiflet
-        elif className == 'ConfCommons':
-            #strclass += "class {}:\n\n".format(className)
-            for field in self.commons:
-                strclass += "   {0} = {1} # {2}\n".format(field[CNAME], field['default'], field['description'])
-
-        else:
-            raise ('Неизвестый класс для генерации')
-        return strclass
-
-
-    # def get_commons_str(self,className):
-    #     str=[]
-    #     #f.write("from datetime import datetime\n\n\n")
-    #     str+="class {}:\n\n".format(className)
-    #     for field in self.commons:
-    #
-    #          str += "   {0} = {1} # {2}\n".format(field[CNAME], field['default'], field['description'])
-    #     return str
-    #
-    # def get_statement_str(self,className):
-    #     str = []
-    #     str += "from datetime import datetime\n\n\n"
-    #     str += "class {}:\n\n".format(className)
-    #     for field in self.fields:
-    #         typestr = self.typemap.get(field['type'], field['type'])
-    #         if className.lower() == 'statementline' or field['qif_letter'] != "":
-    #             str += "   {0} = {1} # {2}\n".format(field[CNAME], typestr, field['description'])
-    #
-    #     if className.lower() == 'qifline':
-    #         #stline.write('   qifletters = {')
-    #         #self.ffields.seek(0)
-    #         qstr = ""
-    #         for field in self.fields:
-    #
-    #             if field['qif_letter'] != "":
-    #                 if qstr != "":
-    #                     qstr+=", "
-    #
-    #                 qstr+= "'{0}': '{1}'".format(field[CNAME], field['qif_letter'])
-    #         qstr+="}"
-    #         qstr='\n\nqifletters = {' + qstr
-    #         str += qstr
-    #     return str
-
-
-    def write_file(self, filename, lines,encoding='utf-8',commentchar='#'):
-        with open(filename, "w", encoding=encoding) as f:
-            f.writelines(self.get_header(commentchar))
-            f.writelines(lines)
+        :return:
+        """
+        maps = self._parse_fields_py(os.path.join(self.SRCDIR,'statementline.py'))
+        print('qifline.py generation...')
+        self._write_qifline(maps)
+        print('readme fields generation...')
+        self._readme_replace("fields", maps)
+        print('readme common generation...')
+        maps = self._parse_fields_py(os.path.join(self.SRCDIR,'confcommons.py'))
+        self._readme_replace("commons", maps)
+        banks = self._get_banks()
+        print('readme banks generation...')
+        self._readme_replace("banks", banks)
 
     def copy_script(self):
+        """
+        Копирует скрипт в каталог публикации (для отладочных целей)
+        Генерит .bat файлы для банков
+        :return:
+        """
 
-
-        # libs
-        dest_dir = self.pubdir + "bankparser"
-        mask=os.path.join(SRCDIR, "*.py")
+        dest_dir = os.path.join(self.pubdir, "bankparser")
+        if not os.path.exists(dest_dir):
+            print('creating dir {}'.format(dest_dir))
+            os.makedirs(dest_dir)
+        mask=os.path.join(self.SRCDIR, "*.py")
+        print('coping .py and .ini files to {}'.format(self.pubdir))
         for file in glob.glob(mask):
-            print("copyng file {}".format(file))
+            #print("copyng file {}".format(file))
             shutil.copy(file, dest_dir)
         # rootfile
-        rootfile=os.path.join(SRCDIR, "bankparsercli.py")
+        rootfile=os.path.join(self.SRCDIR, "bankparsercli.py")
         dest_dir = self.pubdir
-        print("copyng file {}".format(rootfile))
+        #print("copyng file {}".format(rootfile))
         shutil.copy(rootfile, os.path.join(dest_dir,'bankparser.py'))
         # ini files
-        mask = os.path.join(SRCDIR, "*.ini")
+        mask = os.path.join(self.SRCDIR, "*.ini")
         for file in glob.glob(mask):
-            print("copyng file {}".format(file))
+            #print("copyng file {}".format(file))
             shutil.copy(file, dest_dir)
         # generate bat vtb24
-        banks=bankconfig.get_list_banks()
+        banks=self._get_banks()
+        print('generating .bat files for banks')
         for bank in banks:
-            bankconfig.readini(bank)
-            bankfile=bankconfig.commons.statementfilename
-            self.save_bat(bankfile,bank)
-        #self.save_bat("statement.csv","vtb24")
-        #self.save_bat("report.txt","adshares")
 
 
-    def save_bat(self,filetomove,bank):
+            self._save_bat(bank['statementfilename'],bank['bank'])
+
+
+    def _parse_fields_py(self,filename):
+        """
+        Считывает поля класса из файла py обрамленные
+        # start_fields имя поля1;имя поля2;...
+        # end_fields
+        сами поля задаются в комментариях, разделяемые ;
+        :param filename:
+        :return:
+        """
+        startstr = '# start_fields'
+        endstr = '# end_fields'
+        f = open(filename,'r',encoding='utf-8')
+        isreading = False
+        maps = [] # итоговый массив со значениями
+        fields = [] # имена полей в комментариях
+        for line in f:
+            if isreading:
+                if line == endstr:
+                    break
+                map = {}
+                #str=line.strip()
+                ar = line.split('=')
+                map['name'] = ar[0].strip()
+                ar = ar[1].split('#')
+                map['value'] = ar[0].strip()
+                if len(fields) == 1:
+                    map[fields[0]]=ar[1].strip()
+                else:
+                    ar = ar[1].split(';')
+                    count = len(ar)
+                    if count == len(fields):
+                        for i in range(count):
+                            map[fields[i]] = ar[i].strip()
+                    else:
+                        raise BaseException('Ошибка с полями в файле {}'.format(filename))
+                maps.append(map)
+                #print(map)
+            if line.startswith(startstr):
+                isreading = True
+                # Получить список полей из комментария
+                # # start_fields имя поля1;имя поля2;...
+                lens = len(startstr)
+                fields = line[lens:].split(';')
+                for i in range(len(fields)):
+                    fields[i] = fields[i].strip(' \n')
+
+
+
+
+
+
+        f.close()
+
+        return maps
+
+    def _write_qifline(self,maps):
+        filename = os.path.join(self.SRCDIR, 'qifline.py')
+        text = self._get_qifline_text(maps)
+        self._write_file(filename,text)
+
+    def _get_qifline_text(self,maps):
+        """
+        Получение текста класса qifline
+
+
+        :param maps:
+        :return: Текст класса qifline
+        """
+        className = 'QIFLine'
+        strclass = []
+        strclass += "from datetime import datetime\n\n\n"
+        strclass += "class {}:\n\n".format(className)
+        strqiflet = ""
+        for field in maps:
+
+            #typestr = self.typemap.get(field['type'], field['type'])
+            strclass += "   {0} = {1}  # {2}\n".format(field['name'], field['value'], field['description'])
+            if strqiflet != "":
+                strqiflet += ", "
+            strqiflet += "'{0}': '{1}'".format(field['name'], field['qif_letter'])
+        strqiflet = '\n\nqifletters = {' + strqiflet + '}'
+        strclass += strqiflet
+
+        return strclass
+
+    def _write_file(self, filename, lines,encoding='utf-8',commentchar='#'):
+        with open(filename, "w", encoding=encoding) as f:
+            f.writelines(self._get_header(commentchar))
+            f.writelines(lines)
+
+
+
+    def _save_bat(self,filetomove,bank):
         batstr = []
         batstr += "@echo off\n"
-        batstr += self.get_header('rem')
+        batstr += self._get_header('rem')
         batstr += "set bankfile={}\n".format(filetomove)
         batstr += "set bank={}\n".format(bank)
         batstr += "set downloadsdir={}\n".format(self.downloadsdir.replace('/', '\\'))
@@ -190,14 +192,14 @@ class MyBuild:
         with open(filename, "w", encoding="cp866") as f:
             f.writelines(batstr)
 
-    def get_header(self,commentchar='#'):
+    def _get_header(self,commentchar='#'):
         headerstr=[]
         headerstr += "{} Generate automatically by build.py\n".format(commentchar)
         headerstr += "{} don`t change manually\n\n".format(commentchar)
         return headerstr
 
 
-    def readme_replace(self,blockname):
+    def _readme_replace(self,blockname,maps):
         startblock=".. {}_start\n".format(blockname)
         endblock=".. {}_finish\n".format(blockname)
 
@@ -212,45 +214,60 @@ class MyBuild:
                 newlines += line
             if line == startblock:
                 readline = False
-                newlines+=self.get_help(blockname)
+                newlines+=self._get_help(blockname,maps)
 
 
         with open('readme.rst','w',encoding='utf-8') as f:
             f.writelines(newlines)
 
 
-    def get_help(self,blockname):
+    def _get_help(self,blockname,maps):
         if blockname == "commons":
-            return self.get_help_commons()
+            return self._get_help_commons(maps)
         elif blockname == "fields":
-            return self.get_help_fields()
+            return self._get_help_fields(maps)
         elif blockname == "banks":
-            return self.get_help_banks()
+            return self._get_help_banks(maps)
 
-    def get_help_banks(self):
+    def _get_banks(self):
+        srcdir = 'src/bankparser'
+        mask = os.path.join(srcdir, "*.ini")
+        listbanks = []
+        for file in glob.glob(mask):
+            #inifile = os.path.basename(file)
+            confbank = configparser.ConfigParser()
+            confbank.read(file, encoding='utf-8')
+            com = confbank['common']
+            bank = {}
+            bank['bank'] = os.path.splitext(os.path.basename(file))[0]
+            bank['bankname'] = com.get('bankname', bank['bank'])
+            bank['banksite'] = com.get('banksite','http://__')
+            bank['statementfilename'] = com.get('statementfilename','неизвестно')
+            bank['description'] = com.get('description','')
+            #print(bank)
+            #bank = os.path.splitext(inifile)[0]
+            listbanks.append(bank)
+        return listbanks
+
+    def _get_help_banks(self,banks):
         # Получить список ini файлов
-        listbanks=bankconfig.get_list_banks()
+        #listbanks=bankconfig.get_list_banks()
         str = []
         str += "\n"
-        for bank in listbanks:
-            confb=getBankConfig(bank)
-            bankname=confb.commons.bankname
-            banksite=confb.commons.banksite
-            #bankini=os.path.basename(confb.inifile)
-            #str += " * {0} {1} ({2})\n".format(bankname,banksite,bankini)
+        for bank in banks:
+            bankparam = bank['bank']
+            bankname=bank['bankname']
+            banksite=bank['banksite']
+            statementfilename = bank['statementfilename']
+            description = bank['description']
             str += "- `{0}`_ {4}. Параметр запуска **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname, banksite,
-                                                                                            confb.commons.statementfilename,
-                                                                                            bank,
-                                                                                            confb.commons.description)
-            # if confb.commons.description:
-            #     str += "* `{0}`_ ({4}). **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname, banksite,confb.commons.statementfilename, bank,confb.commons.description)
-            # else:
-            #     str += "* `{0}`_. **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname,banksite,confb.commons.statementfilename,bank)
+                                                                                            statementfilename,bankparam,
+                                                                                            description)
 
         str += "\n"
         return  str
 
-    def get_help_commons(self):
+    def _get_help_commons(self,maps):
         """
         Генерация справки по настройкам в common
 
@@ -258,43 +275,40 @@ class MyBuild:
         """
         str=[]
         str+="\n"
-        str+="Описание настроек секции [{}]: \n\n".format(CCOMMON)
-        for field in self.commons:
-            str+=field[CNAME]+"\n"
+        str+="Описание настроек секции [common]: \n\n"
+        for field in maps:
+            str+=field['name']+"\n"
             if field['description'].startswith("Обязательное поле"):
                 str += "   {0}\n".format(field['description'])
             else:
-                str += "   {0}. По умолчанию: {1}\n".format(field['description'],field['default'])
+                str += "   {0}. По умолчанию: {1}\n".format(field['description'],field['value'])
             #str += "   По умолчанию: {0}\n\n".format(field['default'])
         str += "\n"
 
         return str
 
 
-    def get_help_fields(self):
+    def _get_help_fields(self, maps):
         """
-        Генерация справки по полям
+        Генерация текста справки по полям
 
-        :return:
+        :return: Текст справки
         """
+        typemaps = {'""':'string', '\'\'': 'string', 'datetime.now()':'datetime', '0.0': 'float'}
         str=[]
         str+="\n"
         str+="Описание полей: \n\n"
-        for field in self.fields:
-            str+=field[CNAME]+"\n"
-
-            str += "   {0}. Тип поля: {1}\n".format(field['description'],field['type'])
+        for field in maps:
+            str+=field['name']+"\n"
+            type = typemaps.get(field['value'],field['value'])
+            str += "   {0}. Тип поля: {1}\n".format(field['description'],type)
             #str += "   Тип поля: {0}\n\n".format(field['type'])
 
         str += "\n"
 
         return str
 
-
-
-
-
-
-mybuild = MyBuild()
-mybuild.gen_files()
-mybuild.get_help_banks()
+if __name__ == '__main__':
+    mybuild = MyBuild()
+    mybuild.buid()
+    mybuild.copy_script()

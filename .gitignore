@@ -3,6 +3,7 @@
 develop-eggs
 dist
 src/*.egg-info
+*.egg-info
 tags
 build
 eggs
