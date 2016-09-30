@@ -1,1 +1,1 @@
-include CHANGES.rst readme.rst *.ini
+include readme.rst src/bankparser/*.ini

@@ -2,27 +2,34 @@
 """Setup
 """
 import distutils.cmd
-import distutils.command.build as _build
+#from distutils.core import setup
 from setuptools import find_packages
-from distutils.core import setup
-from distutils.command.install import install as _install
-from distutils.command.build_py import build_py
-#from distutils import command as _build_py
-#from distutils.cmd import Command
-#from distutils.cmd import Command as command
+from setuptools import setup
+#from distutils.cmd setuptools.command.test import test as TestCommand
+from setuptools.command.test import test as TestCommand
+#import setuptools.command
+import unittest
+import sys
+
 import build
 version = "0.0.1"
 
-# Генерация файлов и справки
-#mybuild = build.MyBuild()
-#mybuild.gen_files()
 
-class mybuild(build_py):
-    def run(self):
-        print('Here MyBuild')
-        #distutils.command.build.run(self)
-        build_py.run(self)
+class RunTests(TestCommand):
+    """New setup.py command to run all tests for the package.
+    """
+    description = "run all tests for the package"
 
+    def finalize_options(self):
+        super(RunTests, self).finalize_options()
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        tests = unittest.TestLoader().discover('src/bankparser')
+        runner = unittest.TextTestRunner(verbosity=2)
+        res = runner.run(tests)
+        sys.exit(not res.wasSuccessful())
 
 
 class genfiles(distutils.cmd.Command):
@@ -66,12 +73,12 @@ setup(name='bankparser',
       author="Andrey Kapustin",
       author_email="",
       url="https://github.com/partizand/bankparser",
-      description=("Sample plugin for ofxstatement"),
+      description=("Convert banks statements to qif fiormat"),
       long_description=long_description,
       license="GPLv3",
       keywords=["qif", "banking", "statement"],
 
-      cmdclass={'copyscript':copyscript, 'genfiles': genfiles},
+      cmdclass={'test': RunTests, 'copyscript':copyscript, 'genfiles': genfiles},
 
       classifiers=[
           'Development Status :: 3 - Alpha',
@@ -88,12 +95,12 @@ setup(name='bankparser',
 
       packages=['bankparser'],
 
-      package_dir={'bankparser': 'src'},
+      package_dir={'': 'src'},
 
 
-      package_data={'bankparser': ['*.ini']},
+      #package_data={'bankparser': ['*.ini']},
 
-      # install_requires=['setuptools',
+      install_requires=['setuptools'],
       #                   'appdirs'
       #                   ],
       #namespace_packages=["bankparser"],
@@ -102,8 +109,8 @@ setup(name='bankparser',
           'console_scripts':
           ['bankparser = bankparser.bankparsercli:main'],
       },
-      #include_package_data=True,
-      #zip_safe=True
+      include_package_data=True,
+      zip_safe=False
       )
 
 
