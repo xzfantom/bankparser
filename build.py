@@ -58,18 +58,15 @@ class MyBuild:
         mask=os.path.join(self.SRCDIR, "*.py")
         print('coping .py and .ini files to {}'.format(self.pubdir))
         for file in glob.glob(mask):
-            #print("copyng file {}".format(file))
             shutil.copy(file, dest_dir)
         # rootfile
         rootfile=os.path.join(self.SRCDIR, "bankparsercli.py")
         dest_dir = self.pubdir
-        #print("copyng file {}".format(rootfile))
         shutil.copy(rootfile, os.path.join(dest_dir,'bankparser.py'))
         # ini files
-        mask = os.path.join(self.SRCDIR, "*.ini")
-        for file in glob.glob(mask):
-            #print("copyng file {}".format(file))
-            shutil.copy(file, dest_dir)
+        # mask = os.path.join(self.SRCDIR, "*.ini")
+        # for file in glob.glob(mask):
+        #     shutil.copy(file, dest_dir)
         # generate bat vtb24
         banks=self._get_banks()
         print('generating .bat files for banks')
