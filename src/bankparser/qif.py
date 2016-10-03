@@ -81,7 +81,7 @@ class QIF:
                 qif_letter=qifletters[field]
                 if value:
                     if field == 'date':
-                        strFile += 'D' + line.date.strftime('%m/%d/%Y') + '\n'
+                        strFile += 'D' + line.date.strftime('%Y-%m-%d') + '\n'
                     else:
                         strFile += qif_letter + str(value) + '\n'
 
