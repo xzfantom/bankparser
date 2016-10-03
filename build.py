@@ -153,12 +153,13 @@ class MyBuild:
         strclass += "class {}:\n\n".format(className)
         strqiflet = ""
         for field in maps:
+            if field['qif_letter'] != "":
+                #typestr = self.typemap.get(field['type'], field['type'])
+                strclass += "   {0} = {1}  # {3}; {2}\n".format(field['name'], field['value'], field['description'],field['qif_letter'])
 
-            #typestr = self.typemap.get(field['type'], field['type'])
-            strclass += "   {0} = {1}  # {2}\n".format(field['name'], field['value'], field['description'])
-            if strqiflet != "":
-                strqiflet += ", "
-            strqiflet += "'{0}': '{1}'".format(field['name'], field['qif_letter'])
+                if strqiflet != "":
+                    strqiflet += ", "
+                strqiflet += "'{0}': '{1}'".format(field['name'], field['qif_letter'])
         strqiflet = '\n\nqifletters = {' + strqiflet + '}'
         strclass += strqiflet
 
