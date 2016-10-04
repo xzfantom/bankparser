@@ -89,6 +89,7 @@ setup(name='bankparser',
           'Environment :: Console',
           'Operating System :: OS Independent',
           'License :: OSI Approved :: GNU General Public License v3'],
+
       #packages=find_packages('src'),
 
 

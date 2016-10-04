@@ -1,27 +1,16 @@
-import configparser
-from bankparser.confcommons import *
 import os.path
 import glob
+import configparser
+
+from bankparser.confcommons import *
+
 
 DEFAULT_CURRENCY = 'RUB'
 
 #SRCDIR = "src/bankparser/"
 
-#CNAME = 'name'
+CNAME = 'name'
 CCOMMON = 'common'
-
-# Обязательные поля для добавления
-#FIELD_AMOUNT = {CNAME:'amount','type':'float','description':'Сумма','qif_letter':'T'}
-#FIELD_AMOUNTSIGN = {CNAME:'amountsign','type':'string','description':'Слово указание на списание или зачисление, для определения знака суммы','qif_letter':''}
-#FIELD_ACCOUNT = {CNAME:'account','type':'string','description':'Счет','qif_letter':''}
-
-# Поля commons
-#FIELD_DELIMITER={CNAME: 'delimiter','default':'";"','description':'Разделитель полей'}
-#FIELD_DATEFORMAT={CNAME: 'dateformat','default':'"%Y-%m-%d %H:%M:%S"','description':'Формат даты в банковском файле'}
-#FIELD_ENCODING={CNAME: 'encoding','default':'"utf-8"','description':'Кодировка файла'}
-#FIELD_FIELDS={CNAME: 'fields','default':'[]','description':'Имена полей в файле через пробел, нужные поля должны совпадать с именем в описанни доступных полей'}
-#FIELD_STARTAFTER={CNAME: 'startafter','default':'None','description':'Начинать разбор строк со следующей, после стоки начинающейся с указанных символов'}
-#FIELD_TYPE={CNAME: 'type','default':'"Bank"','description':'Тип выписки: Bank или Invst (обычная или операции с ценными бумагами)'}
 
 class BankConfig:
         #_isreadini = False
@@ -67,6 +56,7 @@ class BankConfig:
                         self.bank=bank
                         bankinifile=self._getinifile()
                         if not bankinifile:
+                                print('Не найден ini файл')
                                 raise FileNotFoundError ("Не найден ini для банка {}".format(bank))
                         #print('bankini='.format(bankinifile))
                         self.inifile=bankinifile
@@ -97,12 +87,6 @@ class BankConfig:
                                                 list[key] = settings[section][key]
                                         setattr(self, section, list)
 
-        def printdeb(self):
-                # Список имен полей BankConfig
-                objfields = [arg for arg in dir(BankConfig) if not arg.startswith('_')]
-                for field in objfields:
-                        value = getattr(self, field)
-                        print('{0} = {1}'.format(field,value))
 
 bankconfig = BankConfig()
 
@@ -110,9 +94,3 @@ def getBankConfig(bank):
         bankconfig.readini(bank)
         return bankconfig
 
-
-
-
-#with open(configfile, "r") as f:
-    #settings = yaml.load(f)
-#    settings = config.read(f, encoding='utf-8')

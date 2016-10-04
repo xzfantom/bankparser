@@ -14,18 +14,24 @@ class Vtb24Test(unittest.TestCase):
 '\'40817;2016-09-18 16:20:25;2016-09-18;-644,00;RUR;-644,00;RUR;Операция по карте XXXXXX. ООО Roga РФ Оплата товаров и услуг;Исполнено',
 '\'40817;2016-09-18 14:19:26;2016-09-18;-1701,00;RUR;-1701,00;RUR;Операция по карте XXXXXX. Pukalka РФ Оплата товаров и услуг;Исполнено']
 
+    # def __init__(self, methodName='runTest'):
+    #
+    #     print('init')
+    #     self.parser = Parser.StatementParser(self.bank, self.sampletxt)
+    #     super().__init__(methodName)
+
+
     def setUp(self):
+
         #dir = os.path.dirname(__file__)
-        #inifile = os.path.join(dir, self.statfile)
+
         self.parser = Parser.StatementParser(self.bank, self.sampletxt)
-        self.parser.parse()
+        #self.parser.parse()
 
 
-    def test_parse_float(self):
-        #parser = Parser.StatementParser('vtb24','')
-        #t=parser.parse_float('12,3')
-        self.assertEqual(self.parser.parse_float('12,3'),12.3,'Проверка чтения float с зяпятой')
-        self.assertEqual(self.parser.parse_float('12.3'),12.3,'Проверка чтения float с точкой')
+    # def test_parse_float(self):
+    #     self.assertEqual(self.parser._parse_float('12,3'),12.3,'Проверка чтения float с зяпятой')
+    #     self.assertEqual(self.parser._parse_float('12.3'),12.3,'Проверка чтения float с точкой')
 
     def test_bankname(self):
         self.assertEqual(self.parser.bank,self.bank,'Имя банка в объекте parser')

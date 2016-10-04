@@ -17,17 +17,18 @@ class QIF:
 
 
     def save(self,filename):
+        """
+        Запись qif в файл
+        :param filename:
+        :return:
+        """
         # Генерация файла
-        strFile=self.genstr()
+        strFile=self._genstr()
 
         with open(filename,'w',encoding='utf-8') as f:
             f.write(strFile)
         print('qif saved ({})'.format(filename))
 
-    def printdeb(self):
-
-        for line in self.lines:
-            line.print()
 
     def readstatement(self,statement):
         """
@@ -52,7 +53,7 @@ class QIF:
 
 
 
-    def genstr(self):
+    def _genstr(self):
         strFile=""
 
         # !Account
@@ -69,7 +70,7 @@ class QIF:
         # ^
 
         strFile += '!Account\n'
-        strFile += 'N'+ self.account + '\n'
+        strFile += 'N' + self.account + '\n'
         strFile += '^\n'
 
         strFile += '!Type:{}\n'.format(self.type)

@@ -24,15 +24,14 @@ def main(args=None):
     else:
         newname = os.path.splitext(args.infile)[0]+'.qif'
 
-    parser=bankparser.parser.StatementParser(args.bank,args.infile)
-    parser.parse()
-    count = len(parser.statement.lines)
-    print('Обработано {} строк'.format(count))
-
-    qif=QIF(parser.statement)
-    #qif.printdeb()
-
-    qif.save(newname)
+    with bankparser.parser.StatementParser(args.bank,args.infile) as parser:
+        #parser=bankparser.parser.StatementParser(args.bank,args.infile)
+        #parser.parse()
+        count = len(parser.statement.lines)
+        print('Обработано {} строк'.format(count))
+        qif=QIF(parser.statement)
+        qif.save(newname)
+        print('qif saved ({})'.format(newname))
 
     return 0
 

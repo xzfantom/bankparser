@@ -5,46 +5,59 @@ from bankparser.config import *
 
 from bankparser.statement import Statement, StatementLine
 
-class StatementParser():
 
+class StatementParser:
+
+    _isopenfile = False
     bank = None
     fin = None
     statement = None
     cur_record = 0
     confbank = None
 
-
     def __init__(self,bank,fin):
         self.confbank = getBankConfig(bank)
         if type(fin)==str:
-            encoding = self.confbank.commons.encoding # getattr(self.confbank.commons,FIELD_ENCODING[CNAME])
+            encoding = self.confbank.commons.encoding
             f = open(fin, 'r', encoding=encoding)
             self.fin=f
+            self._isopenfile = True
         else:
             self.fin=fin
         self.statement = Statement()
         self.bank = bank
         self.statement.bank=bank
-        self.statement.type=self.confbank.commons.type #  getattr(self.confbank.commons,FIELD_TYPE[CNAME])
+        self.statement.type=self.confbank.commons.type
+        self._parse()
 
+    def __del__(self):
+        self._close_file()
 
-    def parse(self):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._close_file()
+
+    def _close_file(self):
+        if self._isopenfile:
+            self.fin.close()
+            self._isopenfile = False
+
+    def _parse(self):
         #print('parsing...')
-        reader = self.split_records()
+        reader = self._split_records()
         for line in reader:
             self.cur_record += 1
             if not line:
                 continue
-            stmt_line = self.parse_record(line)
+            stmt_line = self._parse_record(line)
             if stmt_line:
                 self.statement.lines.append(stmt_line)
         #print ('Parsed {} lines'.format(self.cur_record))
         return self.statement
 
-    def split_records(self):
-
-        #dialect=csv.Dialect()
-        #dialect.delimiter=self.__confbank.get('delimiter',';')
+    def _split_records(self):
 
         startafter = self.confbank.commons.startafter # getattr(self.confbank.commons,FIELD_STARTAFTER[CNAME])
         if startafter:
@@ -62,7 +75,7 @@ class StatementParser():
         bdelimiter= self.confbank.commons.delimiter # getattr(self.confbank.commons,FIELD_DELIMITER[CNAME])
         return csv.DictReader(self.fin, delimiter=bdelimiter, fieldnames=fields)
 
-    def parse_record(self,line):
+    def _parse_record(self,line):
         #print(line)
 
         sl = StatementLine()
@@ -81,9 +94,13 @@ class StatementParser():
                 if field=='amount':
                     list = getattr(bankconfig, 'amountsign', None)
                     if list:
-                        sign=list.get(line['amountsign'],'')
-                        rawvalue=sign + rawvalue
-                value = self.parse_value(rawvalue, field)
+                        if 'amountsign' in line.keys():
+                            sign=list.get(line['amountsign'],'')
+                            rawvalue=sign + rawvalue
+                        else:
+                            print('no amountsign in line')
+                            print(line)
+                value = self._parse_value(rawvalue, field)
                 # if field=='action':
                 #     value=self.confbank.actions.get(value.lower(),value)
                 setattr(sl, field, value)
@@ -91,27 +108,20 @@ class StatementParser():
             self.statement.account=sl.account # getattr(sl,FIELD_ACCOUNT[CNAME])
         return sl
 
-
-
-
-
-
-    def parse_value(self, value, field):
+    def _parse_value(self, value, field):
         tp = type(getattr(StatementLine, field))
-
-        if tp == datetime:
-            return self.parse_datetime(value)
+        if isinstance(tp,datetime):
+            return self._parse_datetime(value)
         elif tp == float:
-            return self.parse_float(value)
+            return self._parse_float(value)
         else:
             return value.strip()
 
-
-    def parse_datetime(self, value):
-        date_format =  self.confbank.commons.dateformat #getattr(self.confbank.commons,FIELD_DATEFORMAT[CNAME])
+    def _parse_datetime(self, value):
+        date_format =  self.confbank.commons.dateformat
         return datetime.strptime(value, date_format)
 
-    def parse_float(self, value):
+    def _parse_float(self, value):
         val = value.replace(',', '.')
         return float(val)
 
