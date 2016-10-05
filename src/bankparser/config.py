@@ -5,10 +5,6 @@ import configparser
 from bankparser.confcommons import *
 
 
-DEFAULT_CURRENCY = 'RUB'
-
-#SRCDIR = "src/bankparser/"
-
 CNAME = 'name'
 CCOMMON = 'common'
 

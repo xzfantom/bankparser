@@ -122,11 +122,6 @@ class MyBuild:
                 for i in range(len(fields)):
                     fields[i] = fields[i].strip(' \n')
 
-
-
-
-
-
         f.close()
 
         return maps

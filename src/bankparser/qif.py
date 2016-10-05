@@ -1,11 +1,8 @@
-from datetime import datetime
-from bankparser.statement import *
-from bankparser.statementline import *
-from bankparser.qifline import *
+import bankparser.statementline
+import bankparser.qifline
 
 class QIF:
 
-    #statement = None
     lines = []
     type = "Bank"
     account = ""
@@ -48,9 +45,9 @@ class QIF:
         self.account = statement.account
 
         for stline in statement.lines:
-            qiffields = [arg for arg in dir(QIFLine) if not arg.startswith('_')]
-            statfields = [arg for arg in dir(StatementLine) if not arg.startswith('_')]
-            qifline=QIFLine()
+            qiffields = [arg for arg in dir(bankparser.qifline.QIFLine) if not arg.startswith('_')]
+            statfields = [arg for arg in dir(bankparser.statementline.StatementLine) if not arg.startswith('_')]
+            qifline = bankparser.qifline.QIFLine()
             for statfield in statfields:
                 if statfield in qiffields:
                     setattr(qifline,statfield,getattr(stline,statfield))
@@ -82,10 +79,10 @@ class QIF:
         strFile += '!Type:{}\n'.format(self.type)
 
         for line in self.lines:
-            qiffields = [arg for arg in dir(QIFLine) if not arg.startswith('_')]
+            qiffields = [arg for arg in dir(bankparser.qifline.QIFLine) if not arg.startswith('_')]
             for field in qiffields:
                 value=getattr(line,field)
-                qif_letter=qifletters[field]
+                qif_letter=bankparser.qifline.qifletters[field]
                 if value:
                     if field == 'date':
                         strFile += 'D' + line.date.strftime('%Y-%m-%d') + '\n'
