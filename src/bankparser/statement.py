@@ -1,15 +1,6 @@
-
 class Statement:
     account = None
     currency = 'RUB'
-    bank =None
+    bank = None
     lines = []
     type = "Bank"
-
-
-
-
-
-
-
-

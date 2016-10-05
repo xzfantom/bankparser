@@ -3,37 +3,36 @@ import bankparser.qifline
 
 
 class QIF:
-
     lines = []
     type = "Bank"
     account = ""
 
-    def __init__(self,statement = None):
-        #self.statement=statement
+    def __init__(self, statement=None):
+        # self.statement=statement
         if statement:
             self.readstatement(statement)
 
-    def write(self,f):
+    def write(self, f):
         """
         Запись qif в файл
-        :param filename:
+        :param f: Имя файла или открытый поток
         :return:
         """
 
         if isinstance(f, str):
-            with open(f,'w',encoding='utf-8') as stream:
+            with open(f, 'w', encoding='utf-8') as stream:
                 self._write_to_stream(stream)
-                #print('qif saved ({})'.format(f))
-                #f1.write(strFile)
+                # print('qif saved ({})'.format(f))
+                # f1.write(strFile)
         else:
             self._write_to_stream(f)
 
-    def _write_to_stream(self,stream):
+    def _write_to_stream(self, stream):
         # Генерация файла
-        strFile = self._genstr()
-        stream.write(strFile)
+        strfile = self._genstr()
+        stream.write(strfile)
 
-    def readstatement(self,statement):
+    def readstatement(self, statement):
         """
         Преобразование выписки statement в строки qif
 
@@ -50,14 +49,12 @@ class QIF:
             qifline = bankparser.qifline.QIFLine()
             for statfield in statfields:
                 if statfield in qiffields:
-                    setattr(qifline,statfield,getattr(stline,statfield))
+                    setattr(qifline, statfield, getattr(stline, statfield))
             if qifline:
                 self.lines.append(qifline)
 
-
-
     def _genstr(self):
-        strFile=""
+        strfile = ""
 
         # !Account
         # NJoint Brokerage  Account
@@ -72,27 +69,23 @@ class QIF:
         # PSPRINGFIELD WATER UTILITY
         # ^
 
-        strFile += '!Account\n'
-        strFile += 'N' + self.account + '\n'
-        strFile += '^\n'
+        strfile += '!Account\n'
+        strfile += 'N' + self.account + '\n'
+        strfile += '^\n'
 
-        strFile += '!Type:{}\n'.format(self.type)
+        strfile += '!Type:{}\n'.format(self.type)
 
         for line in self.lines:
             qiffields = [arg for arg in dir(bankparser.qifline.QIFLine) if not arg.startswith('_')]
             for field in qiffields:
-                value=getattr(line,field)
-                qif_letter=bankparser.qifline.qifletters[field]
+                value = getattr(line, field)
+                qif_letter = bankparser.qifline.qifletters[field]
                 if value:
                     if field == 'date':
-                        strFile += 'D' + line.date.strftime('%Y-%m-%d') + '\n'
+                        strfile += 'D' + line.date.strftime('%Y-%m-%d') + '\n'
                     else:
-                        strFile += qif_letter + str(value) + '\n'
+                        strfile += qif_letter + str(value) + '\n'
 
-            strFile += '^\n'
+            strfile += '^\n'
 
-        return strFile
-
-
-
-
+        return strfile

@@ -7,7 +7,6 @@ import bankparser.statementline
 
 
 class StatementParser:
-
     _isopenfile = False
     bank = None
     fin = None
@@ -16,7 +15,7 @@ class StatementParser:
     confbank = None
 
     def __init__(self, bank, fin):
-        self.confbank = bankparser.config.getBankConfig(bank)
+        self.confbank = bankparser.config.get_bank_config(bank)
         if type(fin) == str:
             encoding = self.confbank.commons.encoding
             self.fin = open(fin, 'r', encoding=encoding)

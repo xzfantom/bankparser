@@ -85,9 +85,9 @@ class MyBuild:
         :param filename:
         :return:
         """
-        startstr = '# start_fields'
-        endstr = '# end_fields'
-        f = open(filename,'r',encoding='utf-8')
+        startstr = '    # start_fields'
+        endstr = '    # end_fields'
+        f = open(filename, 'r', encoding='utf-8')
         isreading = False
         maps = [] # итоговый массив со значениями
         fields = [] # имена полей в комментариях
@@ -142,12 +142,12 @@ class MyBuild:
         className = 'QIFLine'
         strclass = []
         strclass += "from datetime import datetime\n\n\n"
-        strclass += "class {}:\n\n".format(className)
+        strclass += "class {}:\n".format(className)
         strqiflet = ""
         for field in maps:
             if field['qif_letter'] != "":
                 #typestr = self.typemap.get(field['type'], field['type'])
-                strclass += "   {0} = {1}  # {3}; {2}\n".format(field['name'], field['value'], field['description'],field['qif_letter'])
+                strclass += "    {0} = {1}  # {3}; {2}\n".format(field['name'], field['value'], field['description'],field['qif_letter'])
 
                 if strqiflet != "":
                     strqiflet += ", "
