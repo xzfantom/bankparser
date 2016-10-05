@@ -8,8 +8,9 @@ from bankparser.confcommons import *
 CNAME = 'name'
 CCOMMON = 'common'
 
+
 class BankConfig:
-        #_isreadini = False
+
         bank = ""
         inifile = ""
         commons = ConfCommons()

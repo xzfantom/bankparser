@@ -1,6 +1,7 @@
 import bankparser.statementline
 import bankparser.qifline
 
+
 class QIF:
 
     lines = []
@@ -11,7 +12,6 @@ class QIF:
         #self.statement=statement
         if statement:
             self.readstatement(statement)
-
 
     def write(self,f):
         """

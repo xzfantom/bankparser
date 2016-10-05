@@ -15,18 +15,18 @@ class StatementParser:
     cur_record = 0
     confbank = None
 
-    def __init__(self,bank,fin):
+    def __init__(self, bank, fin):
         self.confbank = bankparser.config.getBankConfig(bank)
-        if type(fin)==str:
+        if type(fin) == str:
             encoding = self.confbank.commons.encoding
             self.fin = open(fin, 'r', encoding=encoding)
             self._isopenfile = True
         else:
-            self.fin=fin
+            self.fin = fin
         self.statement = bankparser.statement.Statement()
         self.bank = bank
-        self.statement.bank=bank
-        self.statement.type=self.confbank.commons.type
+        self.statement.bank = bank
+        self.statement.type = self.confbank.commons.type
         self._parse()
 
     def __del__(self):
@@ -45,7 +45,7 @@ class StatementParser:
 
     def _parse(self):
         # print('parsing...')
-        self.statement.lines = [] # ????
+        self.statement.lines = []  # ????
         reader = self._split_records()
         for line in reader:
             self.cur_record += 1
@@ -54,7 +54,7 @@ class StatementParser:
             stmt_line = self._parse_record(line)
             if stmt_line:
                 self.statement.lines.append(stmt_line)
-        #print ('Parsed {} lines'.format(self.cur_record))
+        # print ('Parsed {} lines'.format(self.cur_record))
         return self.statement
 
     def _split_records(self):
@@ -65,18 +65,19 @@ class StatementParser:
         startafter = self.confbank.commons.startafter
         if startafter:
             flag = 0
-            strFile = []
+            strfile = []
             for line in self.fin:
                 if flag:
                     # print(line)
-                    if not line in ['\n', '\r\n']:
-                        strFile.append(line)
-                if line.startswith(startafter): flag = 1
-            return csv.DictReader(strFile, delimiter=bdelimiter, fieldnames=fields)
+                    if line not in ['\n', '\r\n']:
+                        strfile.append(line)
+                if line.startswith(startafter):
+                    flag = 1
+            return csv.DictReader(strfile, delimiter=bdelimiter, fieldnames=fields)
         else:
             return csv.DictReader(self.fin, delimiter=bdelimiter, fieldnames=fields)
 
-    def _parse_record(self,line):
+    def _parse_record(self, line):
         """
         Разбор одной строки. Строка должна быть поименована по названиям полей
         :param line:
@@ -92,16 +93,16 @@ class StatementParser:
             if field in inifields:
                 rawvalue = line[field]
                 # Подмена значения из списка настроек, если список есть в настр. банка
-                list = getattr(bankparser.config.bankconfig,field,None)
-                if list:
-                    rawvalue = list.get(rawvalue,rawvalue)
+                changemap = getattr(bankparser.config.bankconfig, field, None)
+                if changemap:
+                    rawvalue = changemap.get(rawvalue, rawvalue)
                 # Подстановка знака для суммы если он есть
-                if field=='amount':
-                    list = getattr(bankparser.config.bankconfig, 'amountsign', None)
-                    if list:
+                if field == 'amount':
+                    changemap = getattr(bankparser.config.bankconfig, 'amountsign', None)
+                    if changemap:
                         if 'amountsign' in line.keys():
-                            sign=list.get(line['amountsign'],'')
-                            rawvalue=sign + rawvalue
+                            sign = changemap.get(line['amountsign'], '')
+                            rawvalue = sign + rawvalue
                         else:
                             pass
                             # print('no amountsign in line')
@@ -110,8 +111,8 @@ class StatementParser:
                 # if field=='action':
                 #     value=self.confbank.actions.get(value.lower(),value)
                 setattr(sl, field, value)
-        if self.cur_record==1:
-            self.statement.account=sl.account
+        if self.cur_record == 1:
+            self.statement.account = sl.account
         return sl
 
     def _parse_value(self, value, field):
@@ -127,10 +128,7 @@ class StatementParser:
         date_format = self.confbank.commons.dateformat
         return datetime.strptime(value, date_format)
 
-    def _parse_float(self, value):
+    @staticmethod
+    def _parse_float(value):
         val = value.replace(',', '.')
         return float(val)
-
-
-
-
