@@ -30,6 +30,10 @@ class ADMoneyTest(unittest.TestCase):
     def test_account(self):
         self.assertEqual(self.parser.statement.account, '12345-000','account in statement')
 
+    def test_linescount(self):
+        count = len(self.parser.statement.lines)
+        self.assertEqual(count,2)
+
     def test_line1amount(self):
         amount = self.parser.statement.lines[0].amount
         self.assertEqual(amount, 721.84, 'Amount in first line (+)')

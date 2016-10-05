@@ -1,5 +1,5 @@
 import unittest
-import os.path
+import datetime
 import bankparser.parser as Parser
 
 class Vtb24Test(unittest.TestCase):
@@ -38,6 +38,10 @@ class Vtb24Test(unittest.TestCase):
     def test_account(self):
         self.assertEqual(self.parser.statement.account, '\'40817','Счет в выписке')
 
+    def test_linescount(self):
+        count = len(self.parser.statement.lines)
+        self.assertEqual(count,4)
+
     def test_lineamount1(self):
         amount = self.parser.statement.lines[0].amount
         self.assertEqual(amount, 11388.91)
@@ -49,6 +53,13 @@ class Vtb24Test(unittest.TestCase):
     def test_linedescr(self):
         descr = self.parser.statement.lines[0].description
         self.assertEqual(descr, "Зарплата")
+
+    def test_date(self):
+        date1 = self.parser.statement.lines[0].date.date()
+        #date1 = date1.date()
+        #date2 = datetime.date(2016, 9, 15)
+        # dt = datetime.date(2016,9,15)
+        self.assertEqual(date1, datetime.date(2016, 9, 15))
 
 
 # if __name__ == '__main__':

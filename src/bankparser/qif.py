@@ -16,19 +16,25 @@ class QIF:
             self.readstatement(statement)
 
 
-    def save(self,filename):
+    def write(self,f):
         """
         Запись qif в файл
         :param filename:
         :return:
         """
+
+        if isinstance(f, str):
+            with open(f,'w',encoding='utf-8') as stream:
+                self._write_to_stream(stream)
+                #print('qif saved ({})'.format(f))
+                #f1.write(strFile)
+        else:
+            self._write_to_stream(f)
+
+    def _write_to_stream(self,stream):
         # Генерация файла
-        strFile=self._genstr()
-
-        with open(filename,'w',encoding='utf-8') as f:
-            f.write(strFile)
-        print('qif saved ({})'.format(filename))
-
+        strFile = self._genstr()
+        stream.write(strFile)
 
     def readstatement(self,statement):
         """

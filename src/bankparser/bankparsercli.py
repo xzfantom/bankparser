@@ -30,7 +30,7 @@ def main(args=None):
         count = len(parser.statement.lines)
         print('Обработано {} строк'.format(count))
         qif=QIF(parser.statement)
-        qif.save(newname)
+        qif.write(newname)
         print('qif saved ({})'.format(newname))
 
     return 0

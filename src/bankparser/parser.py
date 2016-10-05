@@ -112,7 +112,7 @@ class StatementParser:
 
     def _parse_value(self, value, field):
         tp = type(getattr(StatementLine, field))
-        if isinstance(tp,datetime):
+        if tp == datetime:
             return self._parse_datetime(value)
         elif tp == float:
             return self._parse_float(value)
