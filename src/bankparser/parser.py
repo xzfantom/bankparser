@@ -45,7 +45,8 @@ class StatementParser:
             self._isopenfile = False
 
     def _parse(self):
-        #print('parsing...')
+        # print('parsing...')
+        self.statement.lines = [] # ????
         reader = self._split_records()
         for line in reader:
             self.cur_record += 1
@@ -98,8 +99,9 @@ class StatementParser:
                             sign=list.get(line['amountsign'],'')
                             rawvalue=sign + rawvalue
                         else:
-                            print('no amountsign in line')
-                            print(line)
+                            pass
+                            # print('no amountsign in line')
+                            # print(line)
                 value = self._parse_value(rawvalue, field)
                 # if field=='action':
                 #     value=self.confbank.actions.get(value.lower(),value)

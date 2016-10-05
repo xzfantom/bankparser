@@ -11,10 +11,6 @@ class Statement:
     lines = []
     type = "Bank"
 
-    def print(self):
-        print('statement {0} {1}'.format(self.bank,self.account))
-        for line in self.lines:
-            print('{0} {1} {2}'.format(line.date,line.amount,line.description))
 
 
 
