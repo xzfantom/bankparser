@@ -173,7 +173,7 @@ class MyBuild:
         batstr += "\n"
 
         batstr += "move %downloadsdir%%bankfile% %curdir%%bankfile%\n"
-        batstr += "python.exe bankparser.py %bank% %curdir%%bankfile%\n".format(bank, filetomove)
+        batstr += "python.exe bankparser.py convert %bank% %curdir%%bankfile%\n".format(bank, filetomove)
         batstr += "pause\n"
 
         filename = os.path.join(self.pubdir, bank + ".bat")
