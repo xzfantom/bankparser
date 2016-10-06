@@ -2,16 +2,13 @@
 """Setup
 """
 import distutils.cmd
-#from distutils.core import setup
-from setuptools import find_packages
 from setuptools import setup
-#from distutils.cmd setuptools.command.test import test as TestCommand
 from setuptools.command.test import test as TestCommand
-#import setuptools.command
 import unittest
 import sys
 
 import build
+
 version = "0.0.1"
 
 
@@ -32,9 +29,12 @@ class RunTests(TestCommand):
         sys.exit(not res.wasSuccessful())
 
 
-class genfiles(distutils.cmd.Command):
+class GenFiles(distutils.cmd.Command):
+    """Генерация некоторых файлов проекта и справки
+    """
     user_options = []
     description = 'generate .py and readme command'
+
     def initialize_options(self):
         pass
 
@@ -45,10 +45,12 @@ class genfiles(distutils.cmd.Command):
         mybuild = build.MyBuild()
         mybuild.buid()
 
-class copyscript(distutils.cmd.Command):
-    #user_options = []
+
+class CopyScript(distutils.cmd.Command):
+
     user_options = [('pubdir=', None, 'Specify dir for public')]
-    description = 'copy script for testing command'
+    description = 'copy script for testing'
+
     def initialize_options(self):
         self.pubdir = None
 
@@ -56,29 +58,24 @@ class copyscript(distutils.cmd.Command):
         pass
 
     def run(self):
-        #self.run()
-        #print('MyBuild')
         mybuild = build.MyBuild(self.pubdir)
         mybuild.copy_script()
-        #_build_py.run(self)
 
 
-with open('README.rst',encoding='utf-8') as f:
+with open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
-
-
 
 setup(name='bankparser',
       version=version,
       author="Andrey Kapustin",
       author_email="",
       url="https://github.com/partizand/bankparser",
-      description=("Convert banks statements to qif fiormat"),
+      description="Convert banks statements to qif fiormat",
       long_description=long_description,
       license="GPLv3",
       keywords=["qif", "banking", "statement"],
 
-      cmdclass={'test': RunTests, 'copyscript':copyscript, 'genfiles': genfiles},
+      cmdclass={'test': RunTests, 'copyscript': CopyScript, 'genfiles': GenFiles},
 
       classifiers=[
           'Development Status :: 3 - Alpha',
@@ -90,28 +87,23 @@ setup(name='bankparser',
           'Operating System :: OS Independent',
           'License :: OSI Approved :: GNU General Public License v3'],
 
-      #packages=find_packages('src'),
-
-
+      # packages=find_packages('src'),
 
       packages=['bankparser'],
 
       package_dir={'': 'src'},
 
-
-      #package_data={'bankparser': ['*.ini']},
+      # package_data={'bankparser': ['*.ini']},
 
       install_requires=['setuptools'],
       #                   'appdirs'
       #                   ],
-      #namespace_packages=["bankparser"],
+      # namespace_packages=["bankparser"],
 
       entry_points={
           'console_scripts':
-          ['bankparser = bankparser.bankparsercli:main'],
+              ['bankparser = bankparser.bankparsercli:main'],
       },
       include_package_data=True,
       zip_safe=False
       )
-
-
