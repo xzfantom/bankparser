@@ -19,13 +19,15 @@ bankparser
 
   python setup.py install
 
-Не пойму только, почему не создается каталог пакета в site-packages
+Есть другой вариант::
+
+  pip install .
 
 Использование
 -------------
 ::
 
- bankparser bank_name in_file_name [--outfile out_file_name]
+ bankparser convert bank_name in_file_name [--outfile out_file_name]
 
 bank_name
   Имя банка - это имя ini файла с настройками банка
@@ -38,6 +40,10 @@ out_file_name
 
 Настроенные банки
 -----------------
+
+Список настроенных банков можно посмотреть командой::
+
+ bankparser list
 
 .. banks_start
 
@@ -181,9 +187,9 @@ setup notes
   statementline.py -> qifline.py
                    -> readme.rst (.. fields_start  .. fields_finish)
 
-  confcommons.py   -> readme.rst (.. commons_start  .. commons_finish)
+  configcomm.py    -> readme.rst (.. commons_start  .. commons_finish)
 
-  *.ini       -> readme.rst (.. banks_start  .. banks_finish)
+  *.ini            -> readme.rst (.. banks_start  .. banks_finish)
 
 Для добавления обработки поля выписки его нужно добавить в файл statementline.py
 
