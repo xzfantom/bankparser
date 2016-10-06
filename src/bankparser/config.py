@@ -2,7 +2,7 @@ import os.path
 import glob
 import configparser
 
-from bankparser.confcommons import *
+import bankparser.configcomm
 
 CNAME = 'name'
 CCOMMON = 'common'
@@ -11,7 +11,7 @@ CCOMMON = 'common'
 class BankConfig:
     bank = ""
     inifile = ""
-    commons = ConfCommons()
+    commons = bankparser.configcomm.ConfCommons()
 
     def _getinifile(self):
         bankinifile = self.bank + ".ini"
@@ -49,7 +49,7 @@ class BankConfig:
 
     def readini(self, bank):
         if self.bank != bank:
-            self.commons = ConfCommons()
+            self.commons = bankparser.configcomm.ConfCommons()
             self.bank = bank
             bankinifile = self._getinifile()
             if not bankinifile:
@@ -61,7 +61,7 @@ class BankConfig:
             settings.read(bankinifile, encoding='utf-8')
             if CCOMMON in settings.sections():
                 # Список имен полей BankConfig
-                objfields = [arg for arg in dir(ConfCommons) if not arg.startswith('_')]
+                objfields = [arg for arg in dir(bankparser.configcomm.ConfCommons) if not arg.startswith('_')]
                 # Чтение общих настроек банка
                 for field in objfields:
                     defaultvalue = getattr(self.commons, field)
