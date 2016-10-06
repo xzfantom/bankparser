@@ -79,7 +79,7 @@ class BankConfig:
 
                     for key in settings[section]:
                         maplist[key] = settings[section][key]
-                    setattr(self, section, list)
+                    setattr(self, section, maplist)
 
 
 bankconfig = BankConfig()

@@ -85,13 +85,14 @@ class MyBuild:
         :param filename:
         :return:
         """
-        startstr = '    # start_fields'
-        endstr = '    # end_fields'
+        startstr = '# start_fields'
+        endstr = '# end_fields'
         f = open(filename, 'r', encoding='utf-8')
         isreading = False
         maps = [] # итоговый массив со значениями
         fields = [] # имена полей в комментариях
         for line in f:
+            line = line.strip()
             if isreading:
                 if line == endstr:
                     break
@@ -152,7 +153,7 @@ class MyBuild:
                 if strqiflet != "":
                     strqiflet += ", "
                 strqiflet += "'{0}': '{1}'".format(field['name'], field['qif_letter'])
-        strqiflet = '\n\nqifletters = {' + strqiflet + '}'
+        strqiflet = '\n\nqifletters = {' + strqiflet + '}\n'
         strclass += strqiflet
 
         return strclass

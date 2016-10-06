@@ -92,12 +92,12 @@ class StatementParser:
             if field in inifields:
                 rawvalue = line[field]
                 # Подмена значения из списка настроек, если список есть в настр. банка
-                changemap = getattr(bankparser.config.bankconfig, field, None)
+                changemap = getattr(self.confbank, field, None)
                 if changemap:
                     rawvalue = changemap.get(rawvalue, rawvalue)
                 # Подстановка знака для суммы если он есть
                 if field == 'amount':
-                    changemap = getattr(bankparser.config.bankconfig, 'amountsign', None)
+                    changemap = getattr(self.confbank, 'amountsign', None)
                     if changemap:
                         if 'amountsign' in line.keys():
                             sign = changemap.get(line['amountsign'], '')
