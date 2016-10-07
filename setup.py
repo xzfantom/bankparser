@@ -2,31 +2,10 @@
 """Setup
 """
 import distutils.cmd
-from setuptools import setup
-from setuptools.command.test import test as TestCommand
-import unittest
-import sys
+from setuptools import setup, find_packages
 
 import build
-
-version = "0.0.1"
-
-
-class RunTests(TestCommand):
-    """New setup.py command to run all tests for the package.
-    """
-    description = "run all tests for the package"
-
-    def finalize_options(self):
-        super(RunTests, self).finalize_options()
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        tests = unittest.TestLoader().discover('src/bankparser')
-        runner = unittest.TextTestRunner(verbosity=2)
-        res = runner.run(tests)
-        sys.exit(not res.wasSuccessful())
+import src.bankparser
 
 
 class GenFiles(distutils.cmd.Command):
@@ -47,7 +26,9 @@ class GenFiles(distutils.cmd.Command):
 
 
 class CopyScript(distutils.cmd.Command):
-
+    """
+    Для отладочных целей. Копирует пакет без установки в указанный каталог
+    """
     user_options = [('pubdir=', None, 'Specify dir for public')]
     description = 'copy script for testing'
 
@@ -66,7 +47,7 @@ with open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='bankparser',
-      version=version,
+      version=src.bankparser.__version__, # version,
       author="Andrey Kapustin",
       author_email="",
       url="https://github.com/partizand/bankparser",
@@ -75,7 +56,8 @@ setup(name='bankparser',
       license="GPLv3",
       keywords=["qif", "banking", "statement"],
 
-      cmdclass={'test': RunTests, 'copyscript': CopyScript, 'genfiles': GenFiles},
+      # cmdclass={'test': RunTests, 'copyscript': CopyScript, 'genfiles': GenFiles},
+      cmdclass={'copyscript': CopyScript, 'genfiles': GenFiles},
 
       classifiers=[
           'Development Status :: 3 - Alpha',
@@ -87,13 +69,15 @@ setup(name='bankparser',
           'Operating System :: OS Independent',
           'License :: OSI Approved :: GNU General Public License v3'],
 
-      # packages=find_packages('src'),
+      packages=find_packages('src'),
 
-      packages=['bankparser'],
+      #packages=['bankparser'],
 
       package_dir={'': 'src'},
 
-      # package_data={'bankparser': ['*.ini']},
+      package_data={'bankparser': ['*.ini']},
+
+      test_suite='bankparser.test',
 
       install_requires=['setuptools'],
       #                   'appdirs'

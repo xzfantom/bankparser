@@ -46,7 +46,7 @@ def convert(args):
 
 def main(args=None):
     parser = argparse.ArgumentParser(description='Tool to convert proprietary bank statement ' +
-                                                 'to QIf format.')
+                                                 'to QIf format. Ver {}'.format(bankparser.__version__))
     # parser.add_argument("-v", "--version", action="version",
     #                     version='bankparser version %s' % get_version(),
     #                     help="show current version and exit")
