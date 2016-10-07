@@ -51,12 +51,11 @@ setup(name='bankparser',
       author="Andrey Kapustin",
       author_email="",
       url="https://github.com/partizand/bankparser",
-      description="Convert banks statements to qif fiormat",
+      description="Convert banks statements to qif format",
       long_description=long_description,
       license="GPLv3",
       keywords=["qif", "banking", "statement"],
 
-      # cmdclass={'test': RunTests, 'copyscript': CopyScript, 'genfiles': GenFiles},
       cmdclass={'copyscript': CopyScript, 'genfiles': GenFiles},
 
       classifiers=[
