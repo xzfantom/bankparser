@@ -144,7 +144,7 @@ securityname
 price
    Цена (для ценных бумаг). Тип поля: Decimal(0)
 quantity
-   Количество бумаг. Тип поля: float
+   Количество бумаг. Тип поля: Decimal(0)
 commission
    Комиссия (для ценных бумаг). Тип поля: Decimal(0)
 payee

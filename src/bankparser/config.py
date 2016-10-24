@@ -1,6 +1,7 @@
 import os.path
 import glob
 import configparser
+import importlib
 
 import bankparser.configcomm
 
@@ -56,6 +57,10 @@ class BankConfig:
                 print('Не найден ini файл')
                 raise FileNotFoundError("Не найден ini для банка {}".format(bank))
             # print('bankini='.format(bankinifile))
+            self.imp = importlib.import_module("bankparser.maps."+bank)
+            if not self.imp:
+                print('Не найден py файл')
+                raise FileNotFoundError("Не найден py для банка {}".format(bank))
             self.inifile = bankinifile
             settings = configparser.ConfigParser()
             settings.read(bankinifile, encoding='utf-8')

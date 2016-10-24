@@ -18,7 +18,7 @@ class StatementParser:
     def __init__(self, bank, fin):
         self.confbank = bankparser.config.get_bank_config(bank)
         if type(fin) == str:
-            encoding = self.confbank.commons.encoding
+            encoding = self.confbank.imp.commons['encoding']
             self.fin = open(fin, 'r', encoding=encoding)
             self._isopenfile = True
         else:
@@ -26,7 +26,7 @@ class StatementParser:
         self.statement = bankparser.statement.Statement()
         self.bank = bank
         self.statement.bank = bank
-        self.statement.type = self.confbank.commons.type
+        self.statement.type = self.confbank.imp.commons['type']
         self._parse()
 
     def __del__(self):
@@ -59,10 +59,10 @@ class StatementParser:
 
     def _split_records(self):
 
-        fields = self.confbank.commons.fields
-        bdelimiter = self.confbank.commons.delimiter
+        fields = self.confbank.imp.commons['fields']
+        bdelimiter = self.confbank.imp.commons['delimiter']
 
-        startafter = self.confbank.commons.startafter
+        startafter = self.confbank.imp.commons['startafter']
         if startafter:
             flag = 0
             strfile = []
@@ -85,20 +85,20 @@ class StatementParser:
         """
 
         sl = bankparser.statementline.StatementLine()
-
+        # print(self.confbank.imp.action)
         # Список имен полей для банка из ini файла
-        inifields = self.confbank.commons.fields
+        inifields = self.confbank.imp.commons['fields']
         objfields = [arg for arg in dir(bankparser.statementline.StatementLine) if not arg.startswith('_')]
         for field in objfields:
             if field in inifields:
                 rawvalue = line[field]
                 # Подмена значения из списка настроек, если список есть в настр. банка
-                changemap = getattr(self.confbank, field, None)
+                changemap = getattr(self.confbank.imp, field, None)
                 if changemap:
-                    rawvalue = changemap.get(rawvalue.lower(), rawvalue)
+                    rawvalue = changemap.get(rawvalue, rawvalue)
                 # Подстановка знака для суммы если он есть
                 if field == 'amount':
-                    changemap = getattr(self.confbank, 'amountsign', None)
+                    changemap = getattr(self.confbank.imp, 'amountsign', None)
                     if changemap:
                         if 'amountsign' in line.keys():
                             sign = changemap.get(line['amountsign'], '')
@@ -111,14 +111,19 @@ class StatementParser:
                 setattr(sl, field, value)
 
         # Тестово прибавление комиссии к сумме (для работы Альфы)
-        if sl.commission:
-            sl.amount = sl.amount + sl.commission
-        if sl.nkd:
-            sl.amount += sl.nkd
+        # if sl.commission:
+        #     sl.amount = sl.amount + sl.commission
+        # if sl.nkd:
+        #     sl.amount += sl.nkd
         # Конец теста (для работы Альфы)
 
         if self.cur_record == 1:
             self.statement.account = sl.account
+
+        if self.confbank.imp.after_row_parse:
+            self.confbank.imp.after_row_parse(sl, line)
+
+
         return sl
 
     def _parse_value(self, value, field):
@@ -133,7 +138,7 @@ class StatementParser:
             return value.strip()
 
     def _parse_datetime(self, value):
-        date_format = self.confbank.commons.dateformat
+        date_format = self.confbank.imp.commons['dateformat']
         return datetime.strptime(value, date_format)
 
     @staticmethod
@@ -143,5 +148,5 @@ class StatementParser:
 
     @staticmethod
     def _parse_decimal(value):
-        val = value.replace(',', '.')
+        val = value.replace(',', '.').strip('0')
         return Decimal(val)
