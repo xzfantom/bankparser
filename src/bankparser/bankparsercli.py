@@ -1,6 +1,6 @@
 import os
 import sys
-import pkg_resources
+#import pkg_resources
 import argparse
 import bankparser.parser
 import bankparser.qif

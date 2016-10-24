@@ -140,7 +140,8 @@ class MyBuild:
         """
         classname = 'QIFLine'
         strclass = []
-        strclass += "from datetime import datetime\n\n\n"
+        strclass += "from datetime import datetime\n"
+        strclass += "from decimal import Decimal\n\n\n"
         strclass += "class {}:\n".format(classname)
         strqiflet = ""
         for field in maps:

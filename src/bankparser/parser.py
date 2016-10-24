@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime
+from decimal import Decimal
 
 import bankparser.config
 import bankparser.statement
@@ -94,7 +95,7 @@ class StatementParser:
                 # Подмена значения из списка настроек, если список есть в настр. банка
                 changemap = getattr(self.confbank, field, None)
                 if changemap:
-                    rawvalue = changemap.get(rawvalue, rawvalue)
+                    rawvalue = changemap.get(rawvalue.lower(), rawvalue)
                 # Подстановка знака для суммы если он есть
                 if field == 'amount':
                     changemap = getattr(self.confbank, 'amountsign', None)
@@ -107,9 +108,15 @@ class StatementParser:
                             # print('no amountsign in line')
                             # print(line)
                 value = self._parse_value(rawvalue, field)
-                # if field=='action':
-                #     value=self.confbank.actions.get(value.lower(),value)
                 setattr(sl, field, value)
+
+        # Тестово прибавление комиссии к сумме (для работы Альфы)
+        if sl.commission:
+            sl.amount = sl.amount + sl.commission
+        if sl.nkd:
+            sl.amount += sl.nkd
+        # Конец теста (для работы Альфы)
+
         if self.cur_record == 1:
             self.statement.account = sl.account
         return sl
@@ -120,6 +127,8 @@ class StatementParser:
             return self._parse_datetime(value)
         elif tp == float:
             return self._parse_float(value)
+        elif tp == Decimal:
+            return self._parse_decimal(value)
         else:
             return value.strip()
 
@@ -130,4 +139,9 @@ class StatementParser:
     @staticmethod
     def _parse_float(value):
         val = value.replace(',', '.')
-        return float(val)
+        return float(val)\
+
+    @staticmethod
+    def _parse_decimal(value):
+        val = value.replace(',', '.')
+        return Decimal(val)
