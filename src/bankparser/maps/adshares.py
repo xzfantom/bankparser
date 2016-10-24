@@ -13,9 +13,13 @@ commons = {
 'fields': ['date', 'account', 'market', 'Date-podtver', 'securityname', 'securitycod', 'action', 'quantity', 'price', 'amount', 'nkd', 'commission', 'Birj-comis', 'numbersdelki', 'numrepo', 'Subbroker-comis', 'Subagent-comis', 'contragent', 'primechanie']
 }
 
-action={'Куплено': 'buy', 'Продано': 'sell'}
+action={'Куплено': 'BuyX', 'Продано': 'SellX'}
+
+# Денежный счет списания/зачисления
+category = '[Активы:Долгосрочные активы:Ценные бумаги:Альфа-Директ:Деньги Альфа-Директ]'
 
 def after_row_parse(statementline, rawline):
+    statementline.category = category
     # Прибавление комиссии
     statementline.amount += statementline.commission
     # Прибавление НКД
