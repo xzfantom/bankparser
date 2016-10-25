@@ -1,5 +1,6 @@
 import unittest
 import datetime
+from decimal import Decimal
 
 import bankparser.parser
 
@@ -32,11 +33,11 @@ class Vtb24Test(unittest.TestCase):
 
     def test_lineamount1(self):
         amount = self.parser.statement.lines[0].amount
-        self.assertEqual(amount, 11388.91)
+        self.assertEqual(amount, Decimal('11388.91'))
 
     def test_lineamount2(self):
         amount = self.parser.statement.lines[1].amount
-        self.assertEqual(amount, -44.30)
+        self.assertEqual(amount, Decimal('-44.30'))
 
     def test_linedescr(self):
         descr = self.parser.statement.lines[0].description

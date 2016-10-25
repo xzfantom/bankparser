@@ -1,6 +1,7 @@
 import datetime
 import unittest
 import io
+from decimal import Decimal
 
 import bankparser.parser
 import bankparser.qif
@@ -25,11 +26,11 @@ class QIFTest(unittest.TestCase):
 
     def test_lineamount1(self):
         amount = self.qif.lines[0].amount
-        self.assertEqual(amount, 10000.91)
+        self.assertEqual(amount, Decimal('10000.91'))
 
     def test_lineamount2(self):
         amount = self.qif.lines[1].amount
-        self.assertEqual(amount, -44.30)
+        self.assertEqual(amount, Decimal('-44.30'))
 
     def test_linedescr(self):
         descr = self.qif.lines[0].description
@@ -60,11 +61,11 @@ T-44.3
 D2016-09-18
 MОперация по карте
 ^
-T-644.0
+T-644
 D2016-09-18
 MОплата товаров и услуг
 ^
-T-1701.0
+T-1701
 D2016-09-18
 MXXXXXX.
 ^

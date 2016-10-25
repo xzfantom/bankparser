@@ -56,7 +56,7 @@ setup(name='bankparser',
       license="GPLv3",
       keywords=["qif", "banking", "statement"],
 
-      cmdclass={'copyscript': CopyScript, 'genfiles': GenFiles},
+      #cmdclass={'copyscript': CopyScript, 'genfiles': GenFiles},
 
       classifiers=[
           'Development Status :: 3 - Alpha',
