@@ -6,11 +6,12 @@
 import shutil
 import os
 import glob
-import configparser
-
+#import configparser
+import bankparser.config
+import importlib
 
 class MyBuild:
-    srcdir = 'src/bankparser'
+    srcdir = ''
     pubdir = "c:/temp/andrey/bankparser/"
     downloadsdir = "c:/Users/Пользователь/Downloads/"
 
@@ -37,40 +38,45 @@ class MyBuild:
         print('readme fields generation...')
         self._readme_replace("fields", maps)
         print('readme common generation...')
-        maps = self._parse_fields_py(os.path.join(self.srcdir, 'configcomm.py'))
+        maps = self._parse_fields_py(os.path.join(self.srcdir, 'stdbank.py'))
         self._readme_replace("commons", maps)
         banks = self._get_banks()
         print('readme banks generation...')
         self._readme_replace("banks", banks)
 
-    def copy_script(self):
-        """
-        Копирует скрипт в каталог публикации (для отладочных целей)
-        Генерит .bat файлы для банков
-        :return:
-        """
+    # def copy_script(self):
+    #     """
+    #     Копирует скрипт в каталог публикации (для отладочных целей)
+    #     Генерит .bat файлы для банков
+    #     :return:
+    #     """
+    #
+    #     dest_dir = os.path.join(self.pubdir, "bankparser")
+    #     from_dir = self.srcdir
+    #     self._copy_files(from_dir=from_dir, to_dir=dest_dir, mask='*.py')
+    #
+    #     dest_dir = os.path.join(self.pubdir, "bankparser/banks")
+    #     from_dir = os.path.join(self.srcdir,'banks')
+    #     self._copy_files(from_dir=from_dir, to_dir=dest_dir, mask='*.py')
+    #
+    #     # rootfile
+    #     rootfile = os.path.join(self.srcdir, "bankparsercli.py")
+    #     dest_dir = self.pubdir
+    #     shutil.copy(rootfile, os.path.join(dest_dir, 'bankparser.py'))
+    #     # generate bat vtb24
+    #     banks = self._get_banks()
+    #     print('generating .bat files for banks')
+    #     for bank in banks:
+    #         self._save_bat(bank['statementfile'], bank['bankname'])
 
-        dest_dir = os.path.join(self.pubdir, "bankparser")
-        if not os.path.exists(dest_dir):
-            print('creating dir {}'.format(dest_dir))
-            os.makedirs(dest_dir)
-        mask = os.path.join(self.srcdir, "*.py")
-        print('coping .py and .ini files to {}'.format(self.pubdir))
-        for file in glob.glob(mask):
-            shutil.copy(file, dest_dir)
-        # rootfile
-        rootfile = os.path.join(self.srcdir, "bankparsercli.py")
-        dest_dir = self.pubdir
-        shutil.copy(rootfile, os.path.join(dest_dir, 'bankparser.py'))
-        # ini files
-        # mask = os.path.join(self.srcdir, "*.ini")
-        # for file in glob.glob(mask):
-        #     shutil.copy(file, dest_dir)
-        # generate bat vtb24
-        banks = self._get_banks()
-        print('generating .bat files for banks')
-        for bank in banks:
-            self._save_bat(bank['statementfilename'], bank['bank'])
+    # def _copy_files(self, from_dir, to_dir, mask):
+    #     if not os.path.exists(to_dir):
+    #         print('creating dir {}'.format(to_dir))
+    #         os.makedirs(to_dir)
+    #     mask1 = os.path.join(from_dir, mask)
+    #     print('coping {0} files to {1}'.format(mask, to_dir))
+    #     for file in glob.glob(mask1):
+    #         shutil.copy(file, to_dir)
 
     @staticmethod
     def _parse_fields_py(filename):
@@ -163,24 +169,24 @@ class MyBuild:
             f.writelines(self._get_header(commentchar))
             f.writelines(lines)
 
-    def _save_bat(self, filetomove, bank):
-        batstr = []
-        batstr += "@echo off\n"
-        batstr += self._get_header('rem')
-        batstr += "set bankfile={}\n".format(filetomove)
-        batstr += "set bank={}\n".format(bank)
-        batstr += "set downloadsdir={}\n".format(self.downloadsdir.replace('/', '\\'))
-        batstr += "set curdir=%~dp0\n\n"
-        batstr += "\n"
-
-        batstr += "move %downloadsdir%%bankfile% %curdir%%bankfile%\n"
-        batstr += "python.exe bankparser.py convert %bank% %curdir%%bankfile%\n".format(bank, filetomove)
-        batstr += "pause\n"
-
-        filename = os.path.join(self.pubdir, bank + ".bat")
-
-        with open(filename, "w", encoding="cp866") as f:
-            f.writelines(batstr)
+    # def _save_bat(self, filetomove, bank):
+    #     batstr = []
+    #     batstr += "@echo off\n"
+    #     batstr += self._get_header('rem')
+    #     batstr += "set bankfile={}\n".format(filetomove)
+    #     batstr += "set bank={}\n".format(bank)
+    #     batstr += "set downloadsdir={}\n".format(self.downloadsdir.replace('/', '\\'))
+    #     batstr += "set curdir=%~dp0\n\n"
+    #     batstr += "\n"
+    #
+    #     batstr += "move %downloadsdir%%bankfile% %curdir%%bankfile%\n"
+    #     batstr += "python.exe bankparser.py convert %bank% %curdir%%bankfile%\n".format(bank, filetomove)
+    #     batstr += "pause\n"
+    #
+    #     filename = os.path.join(self.pubdir, bank + ".bat")
+    #
+    #     with open(filename, "w", encoding="cp866") as f:
+    #         f.writelines(batstr)
 
     @staticmethod
     def _get_header(commentchar='#'):
@@ -193,7 +199,7 @@ class MyBuild:
         startblock = ".. {}_start\n".format(blockname)
         endblock = ".. {}_finish\n".format(blockname)
 
-        with open('readme.rst', 'r', encoding='utf-8') as f:
+        with open('../../readme.rst', 'r', encoding='utf-8') as f:
             filelines = f.readlines()
         newlines = []
         readline = True
@@ -206,7 +212,7 @@ class MyBuild:
                 readline = False
                 newlines += self._get_help(blockname, maps)
 
-        with open('readme.rst', 'w', encoding='utf-8') as f:
+        with open('../../readme.rst', 'w', encoding='utf-8') as f:
             f.writelines(newlines)
 
     @staticmethod
@@ -218,31 +224,54 @@ class MyBuild:
         elif blockname == "banks":
             return mybuild._get_help_banks(maps)
 
+    # def _get_banks2(self):
+    #     #return bankparser.config.BankConfig.get_list_banks()
+    #     bankspath = os.path.join(self.srcdir, 'banks')
+    #     mask = os.path.join(bankspath, "*.py")
+    #     listbanks = []
+    #     for file in glob.glob(mask):
+    #         # confbank = configparser.ConfigParser()
+    #         # confbank.read(file, encoding='utf-8')
+    #         #com = confbank['common']
+    #         bankname =
+    #         bankmod = importlib.import_module('bankparser.banks.'+bankname)
+    #         curbank = {}
+    #         curbank['bank'] = os.path.splitext(os.path.basename(file))[0]
+    #         curbank['bankname'] = com.get('bankname', curbank['bank'])
+    #         curbank['banksite'] = com.get('banksite', 'http://__')
+    #         curbank['statementfilename'] = com.get('statementfilename', 'неизвестно')
+    #         curbank['description'] = com.get('description', '')
+    #         listbanks.append(curbank)
+    #     return listbanks
+
     def _get_banks(self):
-        mask = os.path.join(self.srcdir, "*.ini")
+        banknames =  bankparser.config.BankConfig.get_list_banks()
         listbanks = []
-        for file in glob.glob(mask):
-            confbank = configparser.ConfigParser()
-            confbank.read(file, encoding='utf-8')
-            com = confbank['common']
+        for bankname in banknames:
+            # confbank = configparser.ConfigParser()
+            # confbank.read(file, encoding='utf-8')
+            #com = confbank['common']
+            bankparser.config.get_bank_config(bankname)
+            #bankmod = importlib.import_module('bankparser.banks.'+bankname)
             curbank = {}
-            curbank['bank'] = os.path.splitext(os.path.basename(file))[0]
-            curbank['bankname'] = com.get('bankname', curbank['bank'])
-            curbank['banksite'] = com.get('banksite', 'http://__')
-            curbank['statementfilename'] = com.get('statementfilename', 'неизвестно')
-            curbank['description'] = com.get('description', '')
+            curbank['banktitle'] = bankparser.config.bankconfig.bank.banktitle
+            curbank['bankname'] = bankparser.config.bankconfig.bank.bankname
+            curbank['banksite'] = bankparser.config.bankconfig.bank.banksite
+            curbank['statementfile'] = bankparser.config.bankconfig.bank.statementfile
+            curbank['description'] = bankparser.config.bankconfig.bank.description
             listbanks.append(curbank)
         return listbanks
+
 
     @staticmethod
     def _get_help_banks(banks):
         helpstr = []
         helpstr += "\n"
         for bank in banks:
-            bankparam = bank['bank']
-            bankname = bank['bankname']
+            bankparam = bank['bankname']
+            bankname = bank['banktitle']
             banksite = bank['banksite']
-            statementfilename = bank['statementfilename']
+            statementfilename = bank['statementfile']
             description = bank['description']
             helpstr += "- `{0}`_ {4}. Параметр запуска **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname,
                                                                                                            banksite,
@@ -297,4 +326,4 @@ class MyBuild:
 if __name__ == '__main__':
     mybuild = MyBuild()
     mybuild.buid()
-    mybuild.copy_script()
+    # mybuild.copy_script()

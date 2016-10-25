@@ -1,46 +1,46 @@
 #!/usr/bin/python3
 """Setup
 """
-import distutils.cmd
+#import distutils.cmd
 from setuptools import setup, find_packages
 
 import build
 import src.bankparser
 
 
-class GenFiles(distutils.cmd.Command):
-    """Генерация некоторых файлов проекта и справки
-    """
-    user_options = []
-    description = 'generate .py and readme command'
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        mybuild = build.MyBuild()
-        mybuild.buid()
-
-
-class CopyScript(distutils.cmd.Command):
-    """
-    Для отладочных целей. Копирует пакет без установки в указанный каталог
-    """
-    user_options = [('pubdir=', None, 'Specify dir for public')]
-    description = 'copy script for testing'
-
-    def initialize_options(self):
-        self.pubdir = None
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        mybuild = build.MyBuild(self.pubdir)
-        mybuild.copy_script()
+# class GenFiles(distutils.cmd.Command):
+#     """Генерация некоторых файлов проекта и справки
+#     """
+#     user_options = []
+#     description = 'generate .py and readme command'
+#
+#     def initialize_options(self):
+#         pass
+#
+#     def finalize_options(self):
+#         pass
+#
+#     def run(self):
+#         mybuild = build.MyBuild()
+#         mybuild.buid()
+#
+#
+# class CopyScript(distutils.cmd.Command):
+#     """
+#     Для отладочных целей. Копирует пакет без установки в указанный каталог
+#     """
+#     user_options = [('pubdir=', None, 'Specify dir for public')]
+#     description = 'copy script for testing'
+#
+#     def initialize_options(self):
+#         self.pubdir = None
+#
+#     def finalize_options(self):
+#         pass
+#
+#     def run(self):
+#         mybuild = build.MyBuild(self.pubdir)
+#         mybuild.copy_script()
 
 
 with open('README.rst', encoding='utf-8') as f:
@@ -68,13 +68,13 @@ setup(name='bankparser',
           'Operating System :: OS Independent',
           'License :: OSI Approved :: GNU General Public License v3'],
 
-      packages=find_packages('src'),
+      #packages=find_packages('src'),
 
-      #packages=['bankparser'],
+      packages=['bankparser', 'bankparser.banks', 'bankparser.test'],
 
       package_dir={'': 'src'},
 
-      package_data={'bankparser': ['*.ini']},
+      #package_data={'bankparser': ['*.ini']},
 
       test_suite='bankparser.test',
 
@@ -87,6 +87,6 @@ setup(name='bankparser',
           'console_scripts':
               ['bankparser = bankparser.bankparsercli:main'],
       },
-      include_package_data=True,
-      zip_safe=False
+      #include_package_data=True,
+      #zip_safe=False
       )

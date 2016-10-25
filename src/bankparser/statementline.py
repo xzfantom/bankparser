@@ -19,3 +19,6 @@ class StatementLine:
     category = ""  # L;Название счета для списания/зачисления (второй счет проводки). Например, Расходы:Питание
     nkd = Decimal(0) #  ;НКД (для облигаций). Добавляется к цене облигации
     # end_fields
+
+    def __repr__(self):
+        return '<stline <date={0} amount={1} descr={2}>>'.format(self.date.strftime('%d-%m-%Y'), self.amount, self.description)
