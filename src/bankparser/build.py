@@ -273,11 +273,8 @@ class MyBuild:
             banksite = bank['banksite']
             statementfilename = bank['statementfile']
             description = bank['description']
-            helpstr += "- `{0}`_ {4}. Параметр запуска **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n".format(bankname,
-                                                                                                           banksite,
-                                                                                                           statementfilename,
-                                                                                                           bankparam,
-                                                                                                           description)
+            str = "- `{0}`_ {4}. Параметр запуска **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n"
+            helpstr += str.format(bankname, banksite, statementfilename, bankparam, description)
 
         helpstr += "\n"
         return helpstr
