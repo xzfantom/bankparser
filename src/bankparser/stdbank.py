@@ -17,6 +17,7 @@ class StdBank:
    statementfile = ''  # Стандартное имя файла выписки
    description = ''  # Описание
    long_descr = '' # Длинное описание
+   xpath_tolines = '' # для формата xml путь к элементам перечисления. Например ./details/detail
    vars = {} # Пременные нужные для конкретного банка. Переопределяются в ini
    # end_fields
 
