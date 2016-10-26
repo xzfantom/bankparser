@@ -65,13 +65,13 @@ class StatementParser:
         sl = bankparser.statementline.StatementLine()
         # print(self.confbank.imp.action)
         # Список имен полей для банка из ini файла
-        inifields = self.confbank.bank.fields
+        inifields = line.keys() #self.confbank.bank.fields
         objfields = [arg for arg in dir(bankparser.statementline.StatementLine) if not arg.startswith('_')]
         for field in objfields:
             if field in inifields:
                 rawvalue = line[field]
                 # Подмена значения из списка настроек, если список есть в настр. банка
-                changemap = getattr(self.confbank.bank, field, None)
+                changemap = getattr(self.confbank.bank.maps, field, None)
                 if changemap:
                     rawvalue = changemap.get(rawvalue, rawvalue)
                 value = self._parse_value(rawvalue, field)

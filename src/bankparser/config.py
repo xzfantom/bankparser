@@ -73,7 +73,7 @@ class BankConfig:
 
                 for key in settings[section]:
                     maplist[key] = settings[section][key]
-                setattr(self.bank, section, maplist)
+                setattr(self.bank.maps, section, maplist)
 
     def get_parser(self, bankname):
         """

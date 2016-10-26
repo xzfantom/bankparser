@@ -14,6 +14,7 @@ class Bank(StdBank):
     fields = {'a_date': 'date', 'acc_code': 'account', 'volume': 'amount', 'direction': 'amountsign',
               'comment': 'description', 'type': 'type'}
 
-    amountsign = {'списание': '-'}
+    def __init__(self):
+        self.maps.amountsign = {'списание': '-'}
 
 

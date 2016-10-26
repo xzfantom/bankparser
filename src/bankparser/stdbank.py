@@ -19,6 +19,7 @@ class StdBank:
    long_descr = '' # Длинное описание
    xpath_tolines = '' # для формата xml путь к элементам перечисления. Например ./details/detail
    vars = {} # Пременные нужные для конкретного банка. Переопределяются в ini
+   maps = object()
    # end_fields
 
 
