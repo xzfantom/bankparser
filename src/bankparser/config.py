@@ -2,12 +2,9 @@ import os.path
 import glob
 import configparser
 import importlib
+
+import bankparser
 #import bankparser.stdbank
-
-#import bankparser.configcomm
-
-#CNAME = 'name'
-#CCOMMON = 'common'
 
 
 class BankConfig:
@@ -78,16 +75,17 @@ class BankConfig:
                     maplist[key] = settings[section][key]
                 setattr(self.bank, section, maplist)
 
-    def get_parse_type(self, bankname):
+    def get_parser(self, bankname):
         """
-        Возвращает тип выписки - csv или xml
+        Return parser class for bankname - ParserCSV or ParserXML
         :param bankname:
         :return:
         """
         if self.bank and self.bank.bankname == bankname:
-            return self.bank.parse_type
+            parser = getattr(bankparser, self.bank.parser)
+            return parser
         self.read_bank(bankname)
-        return self.bank.parse_type
+        return self.get_parser(bankname)
 
     def read_bank(self, bankname):
         if (not self.bank) or (self.bank.bankname != bankname):

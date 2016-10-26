@@ -36,7 +36,8 @@ def convert(args):
     else:
         newname = os.path.splitext(args.infile)[0] + '.qif'
 
-    parser = bankparser.parsercsv.ParserCSV(args.bank, args.infile)
+    parser_class = bankparser.config.bankconfig.get_parser(args.bank)
+    parser = parser_class(args.bank, args.infile)
     count = len(parser.statement.lines)
     print('Read {} lines'.format(count))
     qif = bankparser.qif.QIF(parser.statement)
