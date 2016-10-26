@@ -78,6 +78,16 @@ class BankConfig:
                     maplist[key] = settings[section][key]
                 setattr(self.bank, section, maplist)
 
+    def get_parse_type(self, bankname):
+        """
+        Возвращает тип выписки - csv или xml
+        :param bankname:
+        :return:
+        """
+        if self.bank and self.bank.bankname == bankname:
+            return self.bank.parse_type
+        self.read_bank(bankname)
+        return self.bank.parse_type
 
     def read_bank(self, bankname):
         if (not self.bank) or (self.bank.bankname != bankname):

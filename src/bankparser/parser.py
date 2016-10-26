@@ -8,40 +8,34 @@ import bankparser.statementline
 
 
 class StatementParser:
-    _isopenfile = False
-    bank = None
-    fin = None
+
+    bankname = None
+    filename = None
+    content = None
+    #fin = None
     statement = None
     cur_record = 0
     confbank = None
 
-    def __init__(self, bank, fin):
-        self.confbank = bankparser.config.get_bank_config(bank)
-        if type(fin) == str:
-            encoding = self.confbank.bank.encoding
-            self.fin = open(fin, 'r', encoding=encoding)
-            self._isopenfile = True
+    def __init__(self, bankname, filename, is_content=False):
+        # read settings
+        self.confbank = bankparser.config.get_bank_config(bankname)
+
+        if is_content:
+            self.content = filename
         else:
-            self.fin = fin
+            # read content file in the buffer
+            self.filename = filename
+            encoding = self.confbank.bank.encoding
+            with open(filename, 'r', encoding=encoding)as f:
+                self.content = f.read()
         self.statement = bankparser.statement.Statement()
-        self.bank = bank
-        self.statement.bank = bank
+        self.bankname = bankname
+        self.statement.bank = bankname
         self.statement.type = self.confbank.bank.type
         self._parse()
 
-    def __del__(self):
-        self._close_file()
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self._close_file()
-
-    def _close_file(self):
-        if self._isopenfile:
-            self.fin.close()
-            self._isopenfile = False
 
     def _parse(self):
         # print('parsing...')
@@ -58,24 +52,8 @@ class StatementParser:
         return self.statement
 
     def _split_records(self):
+        return None
 
-        fields = self.confbank.bank.fields
-        bdelimiter = self.confbank.bank.delimiter
-
-        startafter = self.confbank.bank.startafter
-        if startafter:
-            flag = 0
-            strfile = []
-            for line in self.fin:
-                if flag:
-                    # print(line)
-                    if line not in ['\n', '\r\n']:
-                        strfile.append(line)
-                if line.startswith(startafter):
-                    flag = 1
-            return csv.DictReader(strfile, delimiter=bdelimiter, fieldnames=fields)
-        else:
-            return csv.DictReader(self.fin, delimiter=bdelimiter, fieldnames=fields)
 
     def _parse_record(self, line):
         """
@@ -96,17 +74,6 @@ class StatementParser:
                 changemap = getattr(self.confbank.bank, field, None)
                 if changemap:
                     rawvalue = changemap.get(rawvalue, rawvalue)
-                # Подстановка знака для суммы если он есть
-                # if field == 'amount':
-                #     changemap = getattr(self.confbank.bank, 'amountsign', None)
-                #     if changemap:
-                #         if 'amountsign' in line.keys():
-                #             sign = changemap.get(line['amountsign'], '')
-                #             rawvalue = sign + rawvalue
-                #         else:
-                #             pass
-                #             # print('no amountsign in line')
-                #             # print(line)
                 value = self._parse_value(rawvalue, field)
                 setattr(sl, field, value)
 

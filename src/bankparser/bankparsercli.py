@@ -2,7 +2,7 @@ import os
 import sys
 #import pkg_resources
 import argparse
-import bankparser.parser
+import bankparser.parsercsv
 import bankparser.qif
 import bankparser.config
 
@@ -36,12 +36,12 @@ def convert(args):
     else:
         newname = os.path.splitext(args.infile)[0] + '.qif'
 
-    with bankparser.parser.StatementParser(args.bank, args.infile) as parser:
-        count = len(parser.statement.lines)
-        print('Read {} lines'.format(count))
-        qif = bankparser.qif.QIF(parser.statement)
-        qif.write(newname)
-        print('qif saved ({})'.format(newname))
+    parser = bankparser.parsercsv.ParserCSV(args.bank, args.infile)
+    count = len(parser.statement.lines)
+    print('Read {} lines'.format(count))
+    qif = bankparser.qif.QIF(parser.statement)
+    qif.write(newname)
+    print('qif saved ({})'.format(newname))
 
 
 def main(args=None):
