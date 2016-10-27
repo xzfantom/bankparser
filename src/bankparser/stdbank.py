@@ -5,7 +5,7 @@ class StdBank:
     # start_fields description
     parser = 'ParserCSV'  # Имя класса парсера для разбора файла. ParserCSV or ParserXML
     delimiter = ";"  # Разделитель полей для CSV
-    startafter = None  # Начинать разбор строк со следующей, после стоки начинающейся с указанных символов
+    startafter = None  # Для CSV. Начинать разбор строк со следующей, после стоки начинающейся с указанных символов
     dateformat = "%Y-%m-%d %H:%M:%S"  # Формат даты в банковском файле
     encoding = "utf-8"  # Кодировка файла
     fields = []  # Имена полей в файле, нужные поля должны совпадать с именем в описанни доступных полей
@@ -16,9 +16,8 @@ class StdBank:
     description = ''  # Описание
     xpath_tolines = ''  # для формата xml путь к элементам перечисления. Например ./details/detail
     m_vars = {}  # Пременные нужные для конкретного банка. Переопределяются в ini
-    bankname = 'stdbank'  # код банка. Задается автоматически
+    bankname = 'stdbank'  # код банка. Имя файла банка без расширения. Задается автоматически
     # end_fields
-
 
     def after_row_parsed(self, statementline, rawline):
         """
