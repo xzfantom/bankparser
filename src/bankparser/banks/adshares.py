@@ -3,8 +3,9 @@ from bankparser.stdbank import StdBank
 
 
 class Bank(StdBank):
+    parser = 'ParserCSV'
     banktitle = 'Альфа-директ'
-    description = 'Отчет об урегулированных сделках 2016'
+    description = 'Отчет об урегулированных сделках 2016. CSV формат.'
     banksite = 'http://alfadirect.ru'
     statementfile = 'report.txt'
     encoding = 'cp1251'

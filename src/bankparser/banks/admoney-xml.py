@@ -2,14 +2,11 @@
 from bankparser.stdbank import StdBank
 
 
-
-
-
 class Bank(StdBank):
     parser = 'ParserXML'  # Имя класса парсера для разбора файла. ParserCSV or ParserXML
     banktitle = 'Альфа-директ'
     banksite = 'http://alfadirect.ru'
-    description = 'Отчет о движении денежных средств 2016 xml'
+    description = 'Отчет о движении денежных средств 2016. XML формат. Не обрабатываются движения денег только вне сделок покупки/продажи ценных бумаг'
     statementfile = 'xml.xml'
     encoding = 'cp1251'
     dateformat = '%d/%m/%Y %H:%M:%S'

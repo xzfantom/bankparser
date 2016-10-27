@@ -4,7 +4,7 @@ class StdBank:
     """
     # start_fields description
     parser = 'ParserCSV'  # Имя класса парсера для разбора файла. ParserCSV or ParserXML
-    delimiter = ";"  # Разделитель полей
+    delimiter = ";"  # Разделитель полей для CSV
     startafter = None  # Начинать разбор строк со следующей, после стоки начинающейся с указанных символов
     dateformat = "%Y-%m-%d %H:%M:%S"  # Формат даты в банковском файле
     encoding = "utf-8"  # Кодировка файла
@@ -14,10 +14,9 @@ class StdBank:
     banktitle = ''  # Название банка
     statementfile = ''  # Стандартное имя файла выписки
     description = ''  # Описание
-    long_descr = ''  # Длинное описание
     xpath_tolines = ''  # для формата xml путь к элементам перечисления. Например ./details/detail
     m_vars = {}  # Пременные нужные для конкретного банка. Переопределяются в ini
-    bankname = 'stdbank'
+    bankname = 'stdbank'  # код банка. Задается автоматически
     # end_fields
 
 
