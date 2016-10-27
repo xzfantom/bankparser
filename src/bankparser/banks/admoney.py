@@ -13,6 +13,6 @@ class Bank(StdBank):
     type = 'Bank'
     fields = ['date', 'account', 'market', 'amount', 'amountsign', 'description', 'currency']
 
-    amountsign = {'списание': '-'}
+    m_amountsign = {'списание': '-'}
 
 

@@ -2,24 +2,24 @@ import unittest
 import datetime
 from decimal import Decimal
 
-import bankparser.parser
+import bankparser.parsercsv
 
 
 class Vtb24Test(unittest.TestCase):
     bank = 'vtb24'
 
-    sampletxt = \
-        [
-            'Номер карты/счета/договора;Дата операции;Дата обработки;Сумма операции;Валюта операции;Сумма пересчитанная в валюту счета;Валюта счета;Основание;Статус',
-            '\'40817;2016-09-15 09:02:50;2016-09-15;11388,91;RUR;11388,91;RUR;Зарплата;Исполнено',
-            '\'40817;2016-09-18 16:47:57;2016-09-18;-44,30;RUR;-44,30;RUR;Операция по карте;Исполнено',
-            '\'40817;2016-09-18 16:20:25;2016-09-18;-644,00;RUR;-644,00;RUR;Оплата товаров и услуг;Исполнено',
-            '\'40817;2016-09-18 14:19:26;2016-09-18;-1701,00;RUR;-1701,00;RUR;XXXXXX.;Исполнено']
+    sampletxt = """
+Номер карты/счета/договора;Дата операции;Дата обработки;Сумма операции;Валюта операции;Сумма пересчитанная в валюту счета;Валюта счета;Основание;Статус',
+'40817;2016-09-15 09:02:50;2016-09-15;11388,91;RUR;11388,91;RUR;Зарплата;Исполнено
+'40817;2016-09-18 16:47:57;2016-09-18;-44,30;RUR;-44,30;RUR;Операция по карте;Исполнено
+'40817;2016-09-18 16:20:25;2016-09-18;-644,00;RUR;-644,00;RUR;Оплата товаров и услуг;Исполнено
+'40817;2016-09-18 14:19:26;2016-09-18;-1701,00;RUR;-1701,00;RUR;XXXXXX.;Исполнено
+"""
 
-    parser = bankparser.parser.StatementParser(bank, sampletxt)
+    parser = bankparser.parsercsv.ParserCSV(bank, sampletxt, is_content=True)
 
     def test_bankname(self):
-        self.assertEqual(self.parser.bank, self.bank, 'Имя банка в объекте parser')
+        self.assertEqual(self.parser.bankname, self.bank, 'Имя банка в объекте parser')
 
     def test_bankname2(self):
         self.assertEqual(self.parser.statement.bank, self.bank, 'Имя банка в выписке')
