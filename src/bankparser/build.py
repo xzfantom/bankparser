@@ -275,7 +275,7 @@ class MyBuild:
             description = bank['description']
 
             #str = "- `{0}`_ {4}. Параметр запуска **{3}**. Файл выписки {2}\n    .. _`{0}`: {1}\n"
-            str_bank = "- `{0} <{1}>`_ {4}. Параметр запуска **{3}**. Файл выписки {2}\n"
+            str_bank = "- `{0} <{1}>`_. {4}. Параметр запуска **{3}**. Файл выписки {2}\n"
             helpstr += str_bank.format(bankname, banksite, statementfilename, bankparam, description)
 
         helpstr += "\n"
