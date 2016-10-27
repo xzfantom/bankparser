@@ -35,10 +35,7 @@ class StatementParser:
         self.statement.type = self.confbank.bank.type
         self._parse()
 
-
-
     def _parse(self):
-        # print('parsing...')
         self.statement.lines = []  # ????
         reader = self._split_records()
         for line in reader:
@@ -71,22 +68,21 @@ class StatementParser:
             if field in inifields:
                 rawvalue = line[field]
                 # Подмена значения из списка настроек, если список есть в настр. банка
-                changemap = getattr(self.confbank.bank.maps, field, None)
+                changemap = getattr(self.confbank.bank, 'm_' + field, None)
                 if changemap:
                     rawvalue = changemap.get(rawvalue, rawvalue)
                 value = self._parse_value(rawvalue, field)
                 setattr(sl, field, value)
 
         # Подстановка знака для суммы если он есть
-        if sl.amount and sl.amountsign:
+        if sl.amount and sl.amountsign == '-':
             sl.amount = sl.amount * Decimal(sl.amountsign+'1')
 
         # Первая строка содержит счет всей выписки
         if self.cur_record == 1:
             self.statement.account = sl.account
 
-        self.confbank.bank.after_row_parse(sl, line)
-
+        sl = self.confbank.bank.after_row_parsed(sl, line)
 
         return sl
 

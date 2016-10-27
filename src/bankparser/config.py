@@ -4,76 +4,76 @@ import configparser
 import importlib
 
 import bankparser
-#import bankparser.stdbank
 
 
 class BankConfig:
-    #bankname = ""
-    #inifile = ""
-    #commons = bankparser.configcomm.ConfCommons()
+
     bank = None
 
-    def _getinifile(self):
-        bankinifile = self.bank + ".ini"
-        paths = self._get_ini_paths()
-        for path in paths:
-            bankinifile_src = os.path.join(path, bankinifile)
-            if os.path.exists(bankinifile_src):
-                return bankinifile_src
-        return None
+    # def _getinifile(self):
+    #     bankinifile = self.bank + ".ini"
+    #     paths = self._get_ini_paths()
+    #     for path in paths:
+    #         bankinifile_src = os.path.join(path, bankinifile)
+    #         if os.path.exists(bankinifile_src):
+    #             return bankinifile_src
+    #     return None
 
-    @staticmethod
-    def _get_ini_paths():
-        moddir = os.path.dirname(__file__)
-        path1 = os.path.join(moddir, 'banks')
-        paths = [path1]
-        return paths
+    # @staticmethod
+    # def _get_ini_paths():
+    #     moddir = os.path.dirname(__file__)
+    #     path1 = os.path.join(moddir, 'banks')
+    #     paths = [path1]
+    #     return paths
+
+    # @staticmethod
+    # def get_list_banks():
+    #     listpaths = BankConfig._get_ini_paths()
+    #     for path in listpaths:
+    #         # banks = None
+    #         banks = BankConfig._get_list_banks_in_dir(path)
+    #         if banks:
+    #             return banks
+    #     return None
 
     @staticmethod
     def get_list_banks():
-        listpaths = BankConfig._get_ini_paths()
-        for path in listpaths:
-            # banks = None
-            banks = BankConfig._get_list_banks_in_dir(path)
-            if banks:
-                return banks
-        return None
-
-    @staticmethod
-    def _get_list_banks_in_dir(folder):
-        mask = os.path.join(folder, "*.py")
+        """
+        Return list avalible banks
+        :return:
+        """
+        moddir = os.path.dirname(__file__)
+        path_banks = os.path.join(moddir, 'banks')
+        mask = os.path.join(path_banks, "*.py")
         listbanks = []
         for file in glob.glob(mask):
-            inifile = os.path.basename(file)
-            bank = os.path.splitext(inifile)[0]
+            pyfile = os.path.basename(file)
+            bank = os.path.splitext(pyfile)[0]
             listbanks.append(bank)
         return listbanks
 
     def _read_ini(self):
         """
-        Чтене настроек пользователя для банка из ini файла
-        ini файлы ищем в:
-        ~/.bankparser
-
+        Read user settings for bank from ini files in ~/.bankparser
+        banks.ini - common setting for all banks
+        'bankname'.ini - current bank
         :return:
         """
         inifile = self.bank.bankname + '.ini'
         inifiles = []
         userpath = os.path.expanduser('~/.bankparser')
+        # common ini file
+        inifiles.append(os.path.join(userpath, 'banks.ini'))
+        # current bank ini file
         inifiles.append(os.path.join(userpath,inifile))
-
         settings = configparser.ConfigParser()
         settings.read(inifiles, encoding='utf-8')
 
-
         for section in settings.sections():
-
-
                 maplist = {}
-
                 for key in settings[section]:
                     maplist[key] = settings[section][key]
-                setattr(self.bank.maps, section, maplist)
+                setattr(self.bank, 'm_' + section, maplist)
 
     def get_parser(self, bankname):
         """
@@ -81,21 +81,17 @@ class BankConfig:
         :param bankname:
         :return:
         """
-        if self.bank and self.bank.bankname == bankname:
-            parser = getattr(bankparser, self.bank.parser)
-            return parser
         self.read_bank(bankname)
-        return self.get_parser(bankname)
+        parser = getattr(bankparser, self.bank.parser)
+        return parser
 
     def read_bank(self, bankname):
+        """
+        Read settings of bank
+        :param bankname:
+        :return:
+        """
         if (not self.bank) or (self.bank.bankname != bankname):
-            #self.commons = bankparser.configcomm.ConfCommons()
-            #self.bankname = bankname
-            # bankinifile = self._getinifile()
-            # if not bankinifile:
-            #     print('Не найден ini файл')
-            #     raise FileNotFoundError("Не найден ini для банка {}".format(bank))
-            # print('bankini='.format(bankinifile))
             modbank = importlib.import_module("bankparser.banks." + bankname)
             if not modbank:
                 print('Не найден py файл')
@@ -104,35 +100,6 @@ class BankConfig:
             self.bank = bankcls()
             self.bank.bankname = bankname
             self._read_ini()
-            self.bank.after_config_readed()
-            # func = getattr(self.bank,'after_config_readed', None)
-            # if func:
-            #     func()
-            # self.inifile = bankinifile
-            # settings = configparser.ConfigParser()
-            # settings.read(bankinifile, encoding='utf-8')
-            # if CCOMMON in settings.sections():
-            #     # Список имен полей BankConfig
-            #     objfields = [arg for arg in dir(bankparser.configcomm.ConfCommons) if not arg.startswith('_')]
-            #     # Чтение общих настроек банка
-            #     for field in objfields:
-            #         defaultvalue = getattr(self.commons, field)
-            #         inivalue = settings[CCOMMON].get(field, defaultvalue)
-            #         setattr(self.commons, field, inivalue)
-            #     # Список полей в массив
-            #     self.commons.fields = self.commons.fields.split(' ')
-            #
-            #     # self.commons.fields = self.commons.fields.split(' ')
-            #
-            # for section in settings.sections():
-            #     if section != CCOMMON:
-            #
-            #         maplist = {}
-            #
-            #         for key in settings[section]:
-            #             maplist[key] = settings[section][key]
-            #         setattr(self, section, maplist)
-
 
 bankconfig = BankConfig()
 
