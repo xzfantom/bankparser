@@ -109,4 +109,5 @@ class StatementParser:
     @staticmethod
     def _parse_decimal(value):
         val = value.replace(',', '.').strip('0')
+        val = val.replace(' ','')
         return Decimal(val)
