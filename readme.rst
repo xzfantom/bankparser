@@ -15,6 +15,8 @@ bankparser
 Зайти в каталог с исходниками::
 
   python setup.py install
+  
+Для Windows можно скачать исполняемый файл exe без зависимостей https://github.com/partizand/bankparser/releases 
 
 Есть другой вариант::
 
