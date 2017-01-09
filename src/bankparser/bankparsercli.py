@@ -63,15 +63,13 @@ def main(args=None):
     convert_parser.add_argument('--outfile', help='path to qif file')
     convert_parser.set_defaults(func=convert)
 
-    if args==None:
-        # print("No arguments")
+    args = parser.parse_args()
+
+    if not hasattr(args,"func"):
         parser.print_help()
         sys.exit(1)
 
-    args = parser.parse_args()
-
     args.func(args)
-
 
 if __name__ == "__main__":
     sys.exit(main())
