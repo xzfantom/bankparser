@@ -23,5 +23,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from bankparser.parsercsv import ParserCSV
 from bankparser.parserxml import ParserXML
 __version__ = "0.0.1"
-__author__ = "Andrey Kapustin"
+__author__ = "partizand"
 __license__ = "GPL3"
