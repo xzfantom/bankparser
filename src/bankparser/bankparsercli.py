@@ -5,6 +5,9 @@ import argparse
 import bankparser.parsercsv
 import bankparser.qif
 import bankparser.config
+#import bankparser.banks.vtb24
+#from bankparser.parsercsv import ParserCSV
+
 
 
 # def get_version():
