@@ -2,10 +2,11 @@
 """Setup
 """
 #import distutils.cmd
+import re
 from setuptools import setup, find_packages
 
-import build
-import src.bankparser
+# import build
+# import src.bankparser
 
 
 # class GenFiles(distutils.cmd.Command):
@@ -42,13 +43,24 @@ import src.bankparser
 #         mybuild = build.MyBuild(self.pubdir)
 #         mybuild.copy_script()
 
+# find version in init file
+def find_version(filename):
+    with open(filename, 'r') as f:
+        version_file = f.read()
+        version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                                  version_file, re.M)
+        if version_match:
+            return version_match.group(1)
+        raise RuntimeError("Unable to find version string.")
+
+version = find_version("src/bankparser/__init__.py")
 
 with open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='bankparser',
-      version=src.bankparser.__version__, # version,
-      author="Andrey Kapustin",
+      version=version,
+      author="partizand",
       author_email="",
       url="https://github.com/partizand/bankparser",
       description="Convert banks statements to qif format",
