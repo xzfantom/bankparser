@@ -8,7 +8,7 @@ import bankparser.statementline
 
 
 class StatementParser:
-
+    """   Базовый класс для разбора выписки"""
     bankname = None
     filename = None
     content = None
@@ -73,6 +73,13 @@ class StatementParser:
                     rawvalue = changemap.get(rawvalue, rawvalue)
                 value = self._parse_value(rawvalue, field)
                 setattr(sl, field, value)
+
+        # Здесь нужно добавить строку с именем счета
+        # SАктивы: Текущие активы: Наличные
+        # sl.category = "Активы: Текущие активы: Наличные"
+
+        # СТроки которые нужно искать в описании
+        strDescr=list(self.confbank.bank.m_descr_account.keys())
 
         # Подстановка знака для суммы если он есть
         if sl.amount and sl.amountsign == '-':
