@@ -78,8 +78,14 @@ class StatementParser:
         # SАктивы: Текущие активы: Наличные
         # sl.category = "Активы: Текущие активы: Наличные"
 
-        # СТроки которые нужно искать в описании
-        strDescr=list(self.confbank.bank.m_descr_account.keys())
+
+        # Подставление счета по содержимому описания
+        # Строки которые нужно искать в описании
+        listDescr=list(self.confbank.bank.m_descr_account.keys())
+        for strFind in listDescr:
+            if strFind in sl.description:
+                sl.category = self.confbank.bank.m_descr_account[strFind]
+                break
 
         # Подстановка знака для суммы если он есть
         if sl.amount and sl.amountsign == '-':
