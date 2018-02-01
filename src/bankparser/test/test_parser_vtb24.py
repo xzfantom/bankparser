@@ -18,6 +18,18 @@ class Vtb24Test(unittest.TestCase):
 
     parser = bankparser.parsercsv.ParserCSV(bank, sampletxt, is_content=True)
 
+
+    def setUp(self):
+
+        # init change tables
+        m_account = {'\'40817': 'my_account'}
+        setattr(self.parser.confbank.bank, 'm_account', m_account)
+
+        m_descr_account = {'Зарплата': 'Доходы:Зарплата'}
+        setattr(self.parser.confbank.bank, 'm_descr_account', m_descr_account)
+
+        self.parser._parse()
+
     def test_bankname(self):
         self.assertEqual(self.parser.bankname, self.bank, 'Имя банка в объекте parser')
 
@@ -31,6 +43,10 @@ class Vtb24Test(unittest.TestCase):
         count = len(self.parser.statement.lines)
         self.assertEqual(count, 4)
 
+    def test_lineaccount1(self):
+        account = self.parser.statement.lines[0].account
+        self.assertEqual(account, 'my_account')
+
     def test_lineamount1(self):
         amount = self.parser.statement.lines[0].amount
         self.assertEqual(amount, Decimal('11388.91'))
@@ -42,6 +58,10 @@ class Vtb24Test(unittest.TestCase):
     def test_linedescr(self):
         descr = self.parser.statement.lines[0].description
         self.assertEqual(descr, "Зарплата")
+
+    def test_linecategory(self):
+        category = self.parser.statement.lines[0].category
+        self.assertEqual(category, "Доходы:Зарплата", "Category")
 
     def test_date(self):
         date1 = self.parser.statement.lines[0].date.date()
