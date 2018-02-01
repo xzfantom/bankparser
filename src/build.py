@@ -32,13 +32,13 @@ class MyBuild:
 
         :return:
         """
-        maps = self._parse_fields_py(os.path.join(self.srcdir, 'statementline.py'))
+        maps = self._parse_fields_py(os.path.join(self.srcdir, 'bankparser/statementline.py'))
         print('qifline.py generation...')
         self._write_qifline(maps)
         print('readme fields generation...')
         self._readme_replace("fields", maps)
         print('readme common generation...')
-        maps = self._parse_fields_py(os.path.join(self.srcdir, 'stdbank.py'))
+        maps = self._parse_fields_py(os.path.join(self.srcdir, 'bankparser/stdbank.py'))
         self._readme_replace("commons", maps)
         banks = self._get_banks()
         print('readme banks generation...')
@@ -199,7 +199,7 @@ class MyBuild:
         startblock = ".. {}_start\n".format(blockname)
         endblock = ".. {}_finish\n".format(blockname)
 
-        with open('../../readme.rst', 'r', encoding='utf-8') as f:
+        with open('../readme.rst', 'r', encoding='utf-8') as f:
             filelines = f.readlines()
         newlines = []
         readline = True

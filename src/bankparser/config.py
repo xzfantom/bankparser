@@ -91,7 +91,7 @@ class BankConfig:
         :param bankname:
         :return:
         """
-        if (not self.bank) or (self.bank.bankname != bankname):
+        if ((not self.bank) or (self.bank.bankname != bankname)) and (bankname != '__init__'):
             modbank = importlib.import_module("bankparser.banks." + bankname)
             if not modbank:
                 print('Не найден py файл')
