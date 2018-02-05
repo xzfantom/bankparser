@@ -10,7 +10,7 @@ class Vtb24Test(unittest.TestCase):
 
     sampletxt = """
 Номер карты/счета/договора;Дата операции;Дата обработки;Сумма операции;Валюта операции;Сумма пересчитанная в валюту счета;Валюта счета;Основание;Статус',
-'40817;2016-09-15 09:02:50;2016-09-15;11388,91;RUR;11388,91;RUR;Вторая Зарплата за август;Исполнено
+'40817;2016-09-15 09:02:50;2016-09-15;11388,91;RUR;11388,91;RUR;Зарплата за август;Исполнено
 '40817;2016-09-18 16:47:57;2016-09-18;-44,30;RUR;-44,30;RUR;Операция по карте;Исполнено
 '40817;2016-09-18 16:20:25;2016-09-18;-644,00;RUR;-644,00;RUR;Оплата товаров и услуг;Исполнено
 '40817;2016-09-18 14:19:26;2016-09-18;-1701,00;RUR;-1701,00;RUR;XXXXXX.;Исполнено
@@ -24,7 +24,7 @@ class Vtb24Test(unittest.TestCase):
         m_account = {'\'40817': 'my_account'}
         setattr(self.parser.confbank.bank, 'm_account', m_account)
 
-        m_descr_account = {'зарплата': 'Доходы:Зарплата'}
+        m_descr_account = {'Зарплата': 'Доходы:Зарплата'}
         setattr(self.parser.confbank.bank, 'm_descr_account', m_descr_account)
 
         self.statement = self.parser.parse(self.sampletxt, is_content=True)
@@ -56,7 +56,7 @@ class Vtb24Test(unittest.TestCase):
 
     def test_linedescr(self):
         descr = self.statement.lines[0].description
-        self.assertEqual(descr, "Вторая Зарплата за август")
+        self.assertEqual(descr, "Зарплата за август")
 
     def test_linecategory(self):
         category = self.statement.lines[0].category
