@@ -9,7 +9,7 @@ import bankparser.statementline
 
 class StatementParser:
     """   Базовый класс для разбора выписки"""
-    bankname = None
+    #bankname = None
     filename = None
     content = None
     #fin = None
@@ -20,8 +20,26 @@ class StatementParser:
     def __init__(self, bankname, filename, is_content=False):
         # read settings
         self.confbank = bankparser.config.get_bank_config(bankname)
+        self.bankname = bankname
 
-        self.cur_record = 0
+        # self.cur_record = 0
+        # if is_content:
+        #     self.content = filename
+        # else:
+        #     # read content file in the buffer
+        #     self.filename = filename
+        #     encoding = self.confbank.bank.encoding
+        #     with open(filename, 'r', encoding=encoding)as f:
+        #         self.content = f.read()
+        # self.statement = bankparser.statement.Statement()
+        # self.bankname = bankname
+        # self.statement.bank = bankname
+        # self.statement.type = self.confbank.bank.type
+        # self._parse()
+
+    def parse(self, filename, is_content=False):
+
+
         if is_content:
             self.content = filename
         else:
@@ -30,15 +48,25 @@ class StatementParser:
             encoding = self.confbank.bank.encoding
             with open(filename, 'r', encoding=encoding)as f:
                 self.content = f.read()
-        self.statement = bankparser.statement.Statement()
-        self.bankname = bankname
-        self.statement.bank = bankname
-        self.statement.type = self.confbank.bank.type
-        self._parse()
+
+
+        statement = bankparser.statement.Statement(bank=self.bankname, typest=self.confbank.bank.type)
+        cur_record = 0
+
+        reader = self._split_records()
+        for line in reader:
+            cur_record += 1
+            if not line:
+                continue
+            stmt_line = self._parse_record(line)
+            if stmt_line:
+                statement.lines.append(stmt_line)
+        # print ('Parsed {} lines'.format(self.cur_record))
+        return statement
 
     def _parse(self):
-        self.statement.lines = []  # ????
-        self.cur_record = 0
+        #self.statement.lines = []  # ????
+        #self.cur_record = 0
         reader = self._split_records()
         for line in reader:
             self.cur_record += 1
