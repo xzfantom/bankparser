@@ -40,7 +40,7 @@ class QIF:
         :return:
         """
 
-        self.type = statement.type
+        self.typest = statement.typest
         self.account = statement.account
 
         self.lines = []

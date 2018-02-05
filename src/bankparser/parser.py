@@ -17,7 +17,7 @@ class StatementParser:
     #cur_record = 0
     confbank = None
 
-    def __init__(self, bankname, filename, is_content=False):
+    def __init__(self, bankname):
         # read settings
         self.confbank = bankparser.config.get_bank_config(bankname)
         self.bankname = bankname
@@ -38,7 +38,13 @@ class StatementParser:
         # self._parse()
 
     def parse(self, filename, is_content=False):
+        """
+        Parse file or string to statetement object
 
+        :param filename: filename or string
+        :param is_content: filename is string with statement content
+        :return: Statetement object
+        """
 
         if is_content:
             self.content = filename
@@ -51,32 +57,36 @@ class StatementParser:
 
 
         statement = bankparser.statement.Statement(bank=self.bankname, typest=self.confbank.bank.type)
-        cur_record = 0
+        #cur_record = 0
 
         reader = self._split_records()
         for line in reader:
-            cur_record += 1
+            #cur_record += 1
             if not line:
                 continue
             stmt_line = self._parse_record(line)
             if stmt_line:
                 statement.lines.append(stmt_line)
+                # Первая строка содержит счет всей выписки
+                if statement.account is None:
+                    statement.account = stmt_line.account
+
         # print ('Parsed {} lines'.format(self.cur_record))
         return statement
 
-    def _parse(self):
-        #self.statement.lines = []  # ????
-        #self.cur_record = 0
-        reader = self._split_records()
-        for line in reader:
-            self.cur_record += 1
-            if not line:
-                continue
-            stmt_line = self._parse_record(line)
-            if stmt_line:
-                self.statement.lines.append(stmt_line)
-        # print ('Parsed {} lines'.format(self.cur_record))
-        return self.statement
+    # def _parse(self):
+    #     #self.statement.lines = []  # ????
+    #     #self.cur_record = 0
+    #     reader = self._split_records()
+    #     for line in reader:
+    #         #self.cur_record += 1
+    #         if not line:
+    #             continue
+    #         stmt_line = self._parse_record(line)
+    #         if stmt_line:
+    #             self.statement.lines.append(stmt_line)
+    #     # print ('Parsed {} lines'.format(self.cur_record))
+    #     return self.statement
 
     def _split_records(self):
         return None
@@ -121,9 +131,6 @@ class StatementParser:
         if sl.amount and sl.amountsign == '-':
             sl.amount = sl.amount * Decimal(sl.amountsign+'1')
 
-        # Первая строка содержит счет всей выписки
-        if self.cur_record == 1:
-            self.statement.account = sl.account
 
         sl = self.confbank.bank.after_row_parsed(sl, line)
 

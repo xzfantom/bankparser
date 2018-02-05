@@ -39,11 +39,12 @@ def convert(args):
     else:
         newname = os.path.splitext(args.infile)[0] + '.qif'
 
-    parser_class = bankparser.config.bankconfig.get_parser(args.bank)
-    parser = parser_class(args.bank, args.infile)
-    count = len(parser.statement.lines)
+    bank_parser_class = bankparser.config.bankconfig.get_parser(args.bank)
+    bank_parser = bank_parser_class(args.bank)
+    statement = bank_parser.parse(args.infile)
+    count = len(statement.lines)
     print('Read {} lines'.format(count))
-    qif = bankparser.qif.QIF(parser.statement)
+    qif = bankparser.qif.QIF(statement)
     qif.write(newname)
     print('qif saved ({})'.format(newname))
 
