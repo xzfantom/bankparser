@@ -257,7 +257,6 @@ class ADMoneyTest(unittest.TestCase):
         amount = self.statement.lines[1].amount
         self.assertEqual(amount, Decimal('-0.4'), 'Amount in second line (-)')
 
-
     def test_linedescr(self):
         descr = self.statement.lines[0].description
         self.assertEqual(descr, "Внешнее зачисление: купон", 'Description in first line')
