@@ -43,6 +43,8 @@ class QIF:
         self.type = statement.type
         self.account = statement.account
 
+        self.lines = []
+
         for stline in statement.lines:
             qiffields = [arg for arg in dir(bankparser.qifline.QIFLine) if not arg.startswith('_')]
             statfields = [arg for arg in dir(bankparser.statementline.StatementLine) if not arg.startswith('_')]

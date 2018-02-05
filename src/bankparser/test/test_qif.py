@@ -18,10 +18,22 @@ class QIFTest(unittest.TestCase):
 '40817;2016-09-18 14:19:26;2016-09-18;-1701,00;RUR;-1701,00;RUR;XXXXXX.;Исполнено
 """
     parser = bankparser.parsercsv.ParserCSV(bank, sampletxt, is_content=True)
-    qif = bankparser.qif.QIF(parser.statement)
+    #qif = bankparser.qif.QIF(parser.statement)
+
+    def setUp(self):
+
+        # init change tables
+        m_account = {'\'40817': 'my_account'}
+        setattr(self.parser.confbank.bank, 'm_account', m_account)
+
+        m_descr_account = {'Зарплата': 'Доходы:Зарплата'}
+        setattr(self.parser.confbank.bank, 'm_descr_account', m_descr_account)
+
+        self.parser._parse()
+        self.qif = bankparser.qif.QIF(self.parser.statement)
 
     def test_account(self):
-        self.assertEqual(self.qif.account, '\'40817', 'Счет в qif')
+        self.assertEqual(self.qif.account, 'my_account', 'Счет в qif')
 
     def test_lineamount1(self):
         amount = self.qif.lines[0].amount
@@ -49,10 +61,11 @@ class QIFTest(unittest.TestCase):
         contents = output.getvalue()
         output.close()
         etalon = """!Account
-N'40817
+Nmy_account
 ^
 !Type:Bank
 T10000.91
+LДоходы:Зарплата
 D2016-09-15
 MЗарплата
 ^

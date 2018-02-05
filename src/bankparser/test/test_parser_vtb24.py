@@ -37,7 +37,7 @@ class Vtb24Test(unittest.TestCase):
         self.assertEqual(self.parser.statement.bank, self.bank, 'Имя банка в выписке')
 
     def test_account(self):
-        self.assertEqual(self.parser.statement.account, '\'40817', 'Счет в выписке')
+        self.assertEqual(self.parser.statement.account, 'my_account', 'Счет в выписке')
 
     def test_linescount(self):
         count = len(self.parser.statement.lines)

@@ -14,13 +14,14 @@ class StatementParser:
     content = None
     #fin = None
     statement = None
-    cur_record = 0
+    #cur_record = 0
     confbank = None
 
     def __init__(self, bankname, filename, is_content=False):
         # read settings
         self.confbank = bankparser.config.get_bank_config(bankname)
 
+        self.cur_record = 0
         if is_content:
             self.content = filename
         else:
@@ -37,6 +38,7 @@ class StatementParser:
 
     def _parse(self):
         self.statement.lines = []  # ????
+        self.cur_record = 0
         reader = self._split_records()
         for line in reader:
             self.cur_record += 1
