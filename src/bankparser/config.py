@@ -10,32 +10,6 @@ class BankConfig:
 
     bank = None
 
-    # def _getinifile(self):
-    #     bankinifile = self.bank + ".ini"
-    #     paths = self._get_ini_paths()
-    #     for path in paths:
-    #         bankinifile_src = os.path.join(path, bankinifile)
-    #         if os.path.exists(bankinifile_src):
-    #             return bankinifile_src
-    #     return None
-
-    # @staticmethod
-    # def _get_ini_paths():
-    #     moddir = os.path.dirname(__file__)
-    #     path1 = os.path.join(moddir, 'banks')
-    #     paths = [path1]
-    #     return paths
-
-    # @staticmethod
-    # def get_list_banks():
-    #     listpaths = BankConfig._get_ini_paths()
-    #     for path in listpaths:
-    #         # banks = None
-    #         banks = BankConfig._get_list_banks_in_dir(path)
-    #         if banks:
-    #             return banks
-    #     return None
-
     @staticmethod
     def get_list_banks():
         """

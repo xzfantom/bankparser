@@ -9,35 +9,16 @@ import bankparser.statementline
 
 class StatementParser:
     """   Базовый класс для разбора выписки"""
-    #bankname = None
-    filename = None
-    content = None
-    #fin = None
-    statement = None
-    #cur_record = 0
-    confbank = None
 
-    def __init__(self, bankname):
+    def __init__(self, bankname: str):
         # read settings
         self.confbank = bankparser.config.get_bank_config(bankname)
         self.bankname = bankname
 
-        # self.cur_record = 0
-        # if is_content:
-        #     self.content = filename
-        # else:
-        #     # read content file in the buffer
-        #     self.filename = filename
-        #     encoding = self.confbank.bank.encoding
-        #     with open(filename, 'r', encoding=encoding)as f:
-        #         self.content = f.read()
-        # self.statement = bankparser.statement.Statement()
-        # self.bankname = bankname
-        # self.statement.bank = bankname
-        # self.statement.type = self.confbank.bank.type
-        # self._parse()
+        self.filename = None
+        self.content = None
 
-    def parse(self, filename, is_content=False):
+    def parse(self, filename, is_content: bool=False):
         """
         Parse file or string to statetement object
 
@@ -55,13 +36,10 @@ class StatementParser:
             with open(filename, 'r', encoding=encoding)as f:
                 self.content = f.read()
 
-
         statement = bankparser.statement.Statement(bank=self.bankname, typest=self.confbank.bank.type)
-        #cur_record = 0
 
         reader = self._split_records()
         for line in reader:
-            #cur_record += 1
             if not line:
                 continue
             stmt_line = self._parse_record(line)
@@ -71,26 +49,17 @@ class StatementParser:
                 if statement.account is None:
                     statement.account = stmt_line.account
 
-        # print ('Parsed {} lines'.format(self.cur_record))
         return statement
 
-    # def _parse(self):
-    #     #self.statement.lines = []  # ????
-    #     #self.cur_record = 0
-    #     reader = self._split_records()
-    #     for line in reader:
-    #         #self.cur_record += 1
-    #         if not line:
-    #             continue
-    #         stmt_line = self._parse_record(line)
-    #         if stmt_line:
-    #             self.statement.lines.append(stmt_line)
-    #     # print ('Parsed {} lines'.format(self.cur_record))
-    #     return self.statement
-
     def _split_records(self):
+        """
+        Virtual function, must be declared in childrens
+        Splits self.content into array of dictionary values
+        One line is one transaction. Contain key/values pairs
+        Myst return this array
+        :return: Array of dictionaries
+        """
         return None
-
 
     def _parse_record(self, line):
         """
