@@ -67,6 +67,7 @@ class BankConfig:
         # current bank ini file
         inifiles.append(os.path.join(userpath,inifile))
         settings = configparser.ConfigParser()
+        settings.optionxform = str
         settings.read(inifiles, encoding='utf-8')
 
         for section in settings.sections():
