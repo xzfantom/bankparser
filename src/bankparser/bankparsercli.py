@@ -41,6 +41,10 @@ def convert(args):
 
     bank_parser_class = bankparser.config.bankconfig.get_parser(args.bank)
     bank_parser = bank_parser_class(args.bank)
+
+    if args.inifile:
+        bank_parser.read_ini(args.inifile)
+        
     statement = bank_parser.parse(args.infile)
     count = len(statement.lines)
     print('Read {} lines'.format(count))
@@ -65,6 +69,7 @@ def main(args=None):
     convert_parser.add_argument('bank', help='Bank name')
     convert_parser.add_argument('infile', help='path to bank file')
     convert_parser.add_argument('--outfile', help='path to qif file')
+    convert_parser.add_argument('--inifile', help='path to ini file')
     convert_parser.set_defaults(func=convert)
 
     args = parser.parse_args()

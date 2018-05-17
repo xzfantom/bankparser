@@ -69,7 +69,6 @@ class StatementParser:
         """
 
         sl = bankparser.statementline.StatementLine()
-        # print(self.confbank.imp.action)
         # Список имен полей для банка из ini файла
         inifields = line.keys() #self.confbank.bank.fields
         objfields = [arg for arg in dir(bankparser.statementline.StatementLine) if not arg.startswith('_')]
@@ -130,3 +129,17 @@ class StatementParser:
         val = value.replace(',', '.').strip('0')
         val = val.replace(' ','')
         return Decimal(val)
+
+    def read_ini(self, inifile):
+        """
+        Read user settings from ini file
+        """
+        settings = configparser.ConfigParser()
+        settings.optionxform = str
+        settings.read(inifile, encoding='utf-8')
+
+        for section in settings.sections():
+            maplist = {}
+            for key in settings[section]:
+                maplist[key] = settings[section][key]
+            setattr(self.confbank.bank, 'm_' + section, maplist)

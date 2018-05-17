@@ -11,10 +11,14 @@ class ParserCSV(bankparser.parser.StatementParser):
         fin = self.content.split('\n')
 
         startafter = self.confbank.bank.startafter
+        stopafter = self.confbank.bank.stopafter
+
         if startafter:
             flag = 0
             strfile = []
             for line in fin:
+                if stopafter and line.startswith(stopafter):
+                    break
                 if flag:
                     # print(line)
                     if line not in ['\n', '\r\n']:
