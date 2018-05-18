@@ -14,7 +14,6 @@ class StatementParser:
 
     def __init__(self):
         # read settings
-        # self.confbank = None
         self.bankname = None
         self.type = None
 
@@ -70,7 +69,7 @@ class StatementParser:
         Myst return this array
         :return: Array of dictionaries
         """
-        return []
+        raise NotImplementedError
 
     def _parse_record(self, line):
         """
@@ -96,7 +95,6 @@ class StatementParser:
         # Здесь нужно добавить строку с именем счета
         # SАктивы: Текущие активы: Наличные
         # sl.category = "Активы: Текущие активы: Наличные"
-
 
         # Подставление счета по содержимому описания
         # Строки которые нужно искать в описании
@@ -158,13 +156,13 @@ class StatementParser:
     def after_row_parsed(self, sl, line):
         """
         Additional actions after parsing row
-        Virtual function, can be declared in childrens
+        Stub function, can be overwritten in childrens
         """
         return sl
 
     def parse_header(self, content, statement):
         """
         Parsing header
-        Virtual function, can be declared in childrens
+        Stub function, can be overwritten in childrens
         """
         return statement
