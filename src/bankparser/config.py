@@ -57,7 +57,7 @@ class BankConfig:
         :return:
         """
         self.read_bank(bankname)
-        parser = getattr(bankparser, self.bank.parser)
+        parser = self.bank
         return parser
 
     def read_bank(self, bankname):

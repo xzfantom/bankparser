@@ -39,12 +39,13 @@ def convert(args):
     else:
         newname = os.path.splitext(args.infile)[0] + '.qif'
 
-    bank_parser_class = bankparser.config.bankconfig.get_parser(args.bank)
-    bank_parser = bank_parser_class(args.bank)
+    # bank_parser_class = bankparser.config.bankconfig.get_parser(args.bank)
+    # bank_parser = bank_parser_class(args.bank)
+    bank_parser = bankparser.config.bankconfig.get_parser(args.bank)
 
     if args.inifile:
         bank_parser.read_ini(args.inifile)
-        
+
     statement = bank_parser.parse(args.infile)
     count = len(statement.lines)
     print('Read {} lines'.format(count))

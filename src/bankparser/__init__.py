@@ -2,7 +2,12 @@
 bankparser
 
 Convert banks statements to qif format
+
+Original code:
 https://github.com/partizand/bankparser
+
+This fork:
+https://github.com/xzfantom/bankparser
 
 Bankparser works with Python 3
 
@@ -22,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from bankparser.parsercsv import ParserCSV
 from bankparser.parserxml import ParserXML
-__version__ = "0.2.0"
-__author__ = "partizand"
+
+__version__ = "0.2.1"
+__author__ = "partizand, xzfantom"
 __license__ = "GPL3"

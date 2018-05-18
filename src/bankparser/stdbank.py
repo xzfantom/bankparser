@@ -32,5 +32,11 @@ class StdBank:
         """
         return statementline
 
+    def parse_header(self, content, statement):
+        """
+        Parses file to initialize some variables for statement
+        """
+        return statement
+
     def __repr__(self):
         return '<bank name={0}>'.format(self.bankname)

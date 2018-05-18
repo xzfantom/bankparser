@@ -1,4 +1,5 @@
 import csv
+import configparser
 from datetime import datetime
 from decimal import Decimal
 
@@ -7,16 +8,25 @@ import bankparser.statement
 import bankparser.statementline
 
 
+
 class StatementParser:
     """   Базовый класс для разбора выписки"""
 
-    def __init__(self, bankname: str):
+    def __init__(self):
         # read settings
-        self.confbank = bankparser.config.get_bank_config(bankname)
-        self.bankname = bankname
+        # self.confbank = None
+        self.bankname = None
+        self.type = None
 
         self.filename = None
+        self.encoding = "utf-8"
         self.content = None
+
+        self.dateformat = '%d.%m.%Y %H:%M:%S'
+        self.m_descr_account = {}
+        self.fields = []
+
+
 
     def parse(self, filename, is_content: bool=False):
         """
@@ -32,11 +42,12 @@ class StatementParser:
         else:
             # read content file in the buffer
             self.filename = filename
-            encoding = self.confbank.bank.encoding
+            encoding = self.encoding
             with open(filename, 'r', encoding=encoding)as f:
                 self.content = f.read()
 
-        statement = bankparser.statement.Statement(bank=self.bankname, typest=self.confbank.bank.type)
+        statement = bankparser.statement.Statement(bank=self.bankname, typest=self.type)
+        statement = self.parse_header(self.content, statement)
 
         reader = self._split_records()
         for line in reader:
@@ -59,7 +70,7 @@ class StatementParser:
         Myst return this array
         :return: Array of dictionaries
         """
-        return None
+        return []
 
     def _parse_record(self, line):
         """
@@ -76,7 +87,7 @@ class StatementParser:
             if field in inifields:
                 rawvalue = line[field]
                 # Подмена значения из списка настроек, если список есть в настр. банка
-                changemap = getattr(self.confbank.bank, 'm_' + field, None)
+                changemap = getattr(self, 'm_' + field, None)
                 if changemap:
                     rawvalue = changemap.get(rawvalue, rawvalue)
                 value = self._parse_value(rawvalue, field)
@@ -89,10 +100,10 @@ class StatementParser:
 
         # Подставление счета по содержимому описания
         # Строки которые нужно искать в описании
-        listDescr=list(self.confbank.bank.m_descr_account.keys())
+        listDescr=list(self.m_descr_account.keys())
         for strFind in listDescr:
             if strFind in sl.description:
-                sl.category = self.confbank.bank.m_descr_account[strFind]
+                sl.category = self.m_descr_account[strFind]
                 break
 
         # Подстановка знака для суммы если он есть
@@ -100,7 +111,7 @@ class StatementParser:
             sl.amount = sl.amount * Decimal(sl.amountsign+'1')
 
 
-        sl = self.confbank.bank.after_row_parsed(sl, line)
+        sl = self.after_row_parsed(sl, line)
 
         return sl
 
@@ -116,7 +127,7 @@ class StatementParser:
             return value.strip()
 
     def _parse_datetime(self, value):
-        date_format = self.confbank.bank.dateformat
+        date_format = self.dateformat
         return datetime.strptime(value, date_format)
 
     @staticmethod
@@ -142,4 +153,18 @@ class StatementParser:
             maplist = {}
             for key in settings[section]:
                 maplist[key] = settings[section][key]
-            setattr(self.confbank.bank, 'm_' + section, maplist)
+            setattr(self, 'm_' + section, maplist)
+
+    def after_row_parsed(self, sl, line):
+        """
+        Additional actions after parsing row
+        Virtual function, can be declared in childrens
+        """
+        return sl
+
+    def parse_header(self, content, statement):
+        """
+        Parsing header
+        Virtual function, can be declared in childrens
+        """
+        return statement
