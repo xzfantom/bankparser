@@ -17,7 +17,6 @@ class Bank(ParserCSV):
         self.type = 'Bank'
         self.fields = ['date', 'description', 'amount', 'currency', 'amount-operation', 'currency-operation']
         self.transaction_pattern = re.compile(r'\d\d.\d\d.\d{4};')
-        self.garbage_pattern = re.compile(r'(;\d{8}.{64})')
         self.account_pattern = re.compile(r'\.{3}(.*)\.{3}')
 
     def parse_header(self, content, statement):
@@ -36,7 +35,13 @@ class Bank(ParserCSV):
         return strfile
 
     def convert_line(self, line):
-        # removing garbage from line
-        ll = self.garbage_pattern.sub(";", line)
-
-        return ll
+        ar = line.split(";")
+        match = re.search(r'(\d{8}) (\w*)\s*(.*)\b\s{2,}(.*)', ar[1])
+        if match:
+            date = match[1]
+            ar[0] = date[6:8] + "." + date[4:6] + "." + date[0:4]
+            ar[1] = match[4]
+            ll = ";".join(ar)
+            return ll
+        else:
+            return line

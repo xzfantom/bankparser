@@ -31,6 +31,17 @@ class Bank(ParserCSV):
         for line in lines:
             match = self.transaction_pattern.search(line)
             if match:
-                strfile.append(line)
+                strfile.append(self.convert_line(line))
     
         return strfile
+
+    def convert_line(self, line):
+        ar = line.split(";")
+        if len(ar) == 9:
+            return line
+
+        ar.insert(4, "")
+        ar[6] = "-" + ar[5]
+        ll = ";".join(ar)
+        print(ll)
+        return ll
