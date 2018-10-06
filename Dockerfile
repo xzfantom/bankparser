@@ -17,4 +17,4 @@ ADD . .
 RUN python3 setup.py install
 
 EXPOSE 80
-ENTRYPOINT ["python3", "/opt/app/src/web/app.py"]
+ENTRYPOINT ["python3", "/opt/app/src/bankparser/web/app.py"]
