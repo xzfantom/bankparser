@@ -114,6 +114,7 @@ class StatementParser:
         return sl
 
     def _parse_value(self, value, field):
+        print(field, ":", value)
         tp = type(getattr(bankparser.statementline.StatementLine, field))
         if tp == datetime:
             return self._parse_datetime(value)

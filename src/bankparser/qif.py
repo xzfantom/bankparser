@@ -20,7 +20,7 @@ class QIF:
         """
 
         if isinstance(f, str):
-            with open(f, 'w', encoding='utf-8') as stream:
+            with open(f, 'w', encoding='windows-1251') as stream:
                 self._write_to_stream(stream)
                 # print('qif saved ({})'.format(f))
                 # f1.write(strFile)
