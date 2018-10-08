@@ -2,7 +2,7 @@ import bankparser
 import bankparser.config
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, render_template, request, json
 )
 
 bp = Blueprint('index', __name__, url_prefix='/')
@@ -14,7 +14,9 @@ def main():
 
 @bp.route("/parse", methods=['POST'])
 def parse():
-    if 'file' not in request.files:
-        return json.dumps({'html':'<span>No file</span>'})
+    print request.json
+    return json.dumps(request.json)
+    #if 'inputFile' not in request.files:
+    #    return json.dumps({'html':'<span>No file</span>'})
     
-    return json.dumps({'html':'<span>All fields good !!</span>'})
+    #return json.dumps({'html':'<span>All fields good !!</span>'})

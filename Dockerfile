@@ -3,7 +3,7 @@ LABEL maintainer="xzfantom"
 
 RUN pip install Flask
 
-RUN mkdir /opt/app
+RUN mkdir -p /opt/app
 WORKDIR /opt/app
 
 ADD . .
