@@ -14,7 +14,8 @@ WORKDIR /opt/app
 
 # RUN git clone https://github.com/xzfantom/bankparser.git .
 ADD . .
-RUN python3 setup.py install
+# RUN python3 setup.py install
+
 
 EXPOSE 5000
-ENTRYPOINT ["manage.py"]
+ENTRYPOINT ["python3", "src/manage.py"]
