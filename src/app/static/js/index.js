@@ -5,7 +5,7 @@ $(function(){
 			url: '/parse',
 			//data: $('form').serialize(),
 			dataType: "JSON",
-			data: new FormData(this),
+			data: new FormData('form'),
 			processData: false,
 			contentType: false,
 			type: 'POST',
