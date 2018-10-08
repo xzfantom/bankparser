@@ -10,10 +10,6 @@ bp = Blueprint('index', __name__, url_prefix='/')
 @bp.route("/")
 def main():
     banks = bankparser.config.bankconfig.get_list_banks()
-    
-    for bank in banks:
-        print(bank)
-
     return render_template('index.html', banks=banks)
 
 @bp.route("/parse", methods=['POST'])
