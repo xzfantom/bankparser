@@ -3,7 +3,11 @@ $(function(){
 		
 		$.ajax({
 			url: '/parse',
-			data: $('form').serialize(),
+			//data: $('form').serialize(),
+			dataType: "JSON",
+			data: new FormData(this),
+			processData: false,
+			contentType: false,
 			type: 'POST',
 			success: function(response){
 				console.log(response);
