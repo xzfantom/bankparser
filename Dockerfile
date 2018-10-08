@@ -16,5 +16,5 @@ WORKDIR /opt/app
 ADD . .
 RUN python3 setup.py install
 
-EXPOSE 80
-ENTRYPOINT ["python3", "/opt/app/src/bankparser/web/app.py"]
+EXPOSE 5000
+ENTRYPOINT ["manage.py"]

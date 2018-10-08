@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, json
-import bankparser
+#from .. import bankparser
+from .bankparser import config
 
 app = Flask(__name__)
 
