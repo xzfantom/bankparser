@@ -14,7 +14,7 @@ def main():
 
 @bp.route("/parse", methods=['POST'])
 def parse():
-    print (request.json)
+    print (request.get_json())
     return json.dumps(request.json)
     #if 'inputFile' not in request.files:
     #    return json.dumps({'html':'<span>No file</span>'})

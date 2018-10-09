@@ -4,7 +4,7 @@ $(function(){
 		$.ajax({
 			url: '/parse',
 			//data: $('form').serialize(),
-			dataType: "JSON",
+			//dataType: "JSON",
 			data: new FormData('form'),
 			processData: false,
 			contentType: false,
