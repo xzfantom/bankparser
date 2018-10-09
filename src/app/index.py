@@ -12,7 +12,7 @@ def main():
     banks = bankparser.config.bankconfig.get_list_banks()
     return render_template('index.html', banks=banks)
 
-@bp.route("/parse", methods=['POST'])
+@bp.route("/parse/", methods=['POST'])
 def parse():
     if 'inputFile' not in request.files:
         return json.dumps({'html':'<span>No file</span>'})
