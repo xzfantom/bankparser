@@ -7,6 +7,8 @@ from flask import (
     Blueprint, render_template, request, json, url_for, send_file
 )
 
+from flask import current_app as app
+
 bp = Blueprint('index', __name__, url_prefix='/')
 
 @bp.route("/")
@@ -19,15 +21,18 @@ def parse():
     if 'inputFile' not in request.files:
         return redirect(url_for('/'))
 
-    format = "%Y-%m-%dT%H:%M:%S"
+    format = "%Y%m%dT%H%M%S"
     now = datetime.datetime.utcnow().strftime(format)
 
     file = request.files['file']
+    bankname = request.form['inputBank']
     
     newname = bankname + now + ".qif"
     newname = os.path.join(app.config['UPLOAD_FOLDER'], newname)
+
     filename = bankname + now + ".in"
     filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
     file.save(filename)
     
     bank_parser = bankparser.config.bankconfig.get_parser(bankname)
