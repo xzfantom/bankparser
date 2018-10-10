@@ -24,7 +24,7 @@ def parse():
     format = "%Y%m%dT%H%M%S"
     now = datetime.datetime.utcnow().strftime(format)
 
-    file = request.files['file']
+    file = request.files['inputFile']
     bankname = request.form['inputBank']
     
     newname = bankname + now + ".qif"

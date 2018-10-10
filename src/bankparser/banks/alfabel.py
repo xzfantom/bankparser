@@ -36,7 +36,7 @@ class Bank(ParserCSV):
 
     def convert_line(self, line):
         ar = line.split(";")
-        match = re.search(r'(\d{8}) (\w*)\s*(.*)\b\s{2,}(.*)', ar[1])
+        match = re.search(r';(\d{8}) (\w*)\s*(.*)\b\s{2,}(.*)', ar[1])
         if match:
             date = match[1]
             ar[0] = date[6:8] + "." + date[4:6] + "." + date[0:4]
