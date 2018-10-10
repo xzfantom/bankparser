@@ -1,8 +1,9 @@
 import bankparser
 import bankparser.config
+import os
 
 from flask import (
-    Blueprint, render_template, request, json
+    Blueprint, render_template, request, json, url_for
 )
 
 bp = Blueprint('index', __name__, url_prefix='/')
@@ -15,6 +16,23 @@ def main():
 @bp.route("/parse/", methods=['POST'])
 def parse():
     if 'inputFile' not in request.files:
-        return json.dumps({'html':'<span>No file</span>'})
+        return redirect(url_for('/'))
+
+    format = "%Y-%m-%dT%H:%M:%S"
+    now = datetime.datetime.utcnow().strftime(format)
+
+    file = request.files['file']
     
-    return json.dumps({'html':'<span>All fields good !!</span>'})
+    newname = bankname + now + ".qif"
+    newname = os.path.join(app.config['UPLOAD_FOLDER'], newname)
+    filename = bankname + now + ".in"
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filename)
+    
+    bank_parser = bankparser.config.bankconfig.get_parser(bankname)
+
+    statement = bank_parser.parse(filename)
+    qif = bankparser.qif.QIF(statement)
+    qif.write(newname)
+
+    return send_file(newname, as_attachment=True)
