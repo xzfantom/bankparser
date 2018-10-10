@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from bankparser.parsercsv import ParserCSV
 from bankparser.parserxml import ParserXML
+import bankparser.config
 
 __version__ = "0.2.1"
 __author__ = "partizand, xzfantom"
