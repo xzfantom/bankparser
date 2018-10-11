@@ -1,5 +1,6 @@
 import bankparser
 import bankparser.config
+import bankparser.qif
 import os
 import datetime
 
