@@ -18,3 +18,4 @@ statement.csv
 *.*-
 report.txt
 /docs/_build/
+/src/instance/
