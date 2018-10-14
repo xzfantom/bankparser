@@ -2,7 +2,6 @@ import os
 import sys
 import argparse
 import bankparser.parsercsv
-import bankparser.qif
 import bankparser.config
 
 
@@ -30,13 +29,16 @@ def convert(args):
     :return:
     """
     print('Convert {0} file {1}'.format(args.bank, args.infile))
+
+    outformat = "qif"
+    if args.format:
+        outformat = args.format    
+
     if args.outfile:
         newname = args.outfile
     else:
-        newname = os.path.splitext(args.infile)[0] + '.qif'
+        newname = os.path.splitext(args.infile)[0] + '.out.' + outformat
 
-    # bank_parser_class = bankparser.config.bankconfig.get_parser(args.bank)
-    # bank_parser = bank_parser_class(args.bank)
     bank_parser = bankparser.config.bankconfig.get_parser(args.bank)
 
     if args.inifile:
@@ -45,9 +47,14 @@ def convert(args):
     statement = bank_parser.parse(args.infile)
     count = len(statement.lines)
     print('Read {} lines'.format(count))
-    qif = bankparser.qif.QIF(statement)
-    qif.write(newname)
-    print('qif saved ({})'.format(newname))
+    if outformat == "qif":
+        from .output import qif
+        out = qif.QIF(statement)
+    else:
+        from .output import csv
+        out = csv.CSV(statement=statement)
+    out.write(newname)
+    print('file saved ({})'.format(newname))
 
 
 def main(args=None):
@@ -67,6 +74,7 @@ def main(args=None):
     convert_parser.add_argument('infile', help='path to bank file')
     convert_parser.add_argument('--outfile', help='path to qif file')
     convert_parser.add_argument('--inifile', help='path to ini file')
+    convert_parser.add_argument('--format', help='output file format (qif, csv)')
     convert_parser.set_defaults(func=convert)
 
     args = parser.parse_args()

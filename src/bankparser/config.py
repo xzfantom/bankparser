@@ -23,7 +23,8 @@ class BankConfig:
         for file in glob.glob(mask):
             pyfile = os.path.basename(file)
             bank = os.path.splitext(pyfile)[0]
-            listbanks.append(bank)
+            if bank != "__init__":
+                listbanks.append(bank)
         return listbanks
 
     def _read_ini(self):

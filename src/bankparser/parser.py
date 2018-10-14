@@ -114,7 +114,7 @@ class StatementParser:
         return sl
 
     def _parse_value(self, value, field):
-        print(field, ":", value)
+        # print(field, ":", value)
         tp = type(getattr(bankparser.statementline.StatementLine, field))
         if tp == datetime:
             return self._parse_datetime(value)
@@ -138,7 +138,13 @@ class StatementParser:
     def _parse_decimal(value):
         val = value.replace(',', '.').strip('0')
         val = val.replace(' ','')
-        return Decimal(val)
+        try:
+            res = Decimal(val)
+        except Exception:
+            print("Ожидаем число, но на входе: " + value)
+            res = 0
+
+        return res
 
     def read_ini(self, inifile):
         """

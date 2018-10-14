@@ -15,6 +15,8 @@ class Bank(ParserCSV):
         self.startafter = '"Тип","Дата операции"'
         self.stopafter = '"  Типы операций"'
         self.type = 'Bank'
+        
+        # Номер транзакции;Время транзакции;Тип операции;Статус операции;Сумма в валюте операции;Код валюты;Место;Страна;Детализация
         self.fields = ['date', 'description', 'amount', 'currency', 'amount-operation', 'currency-operation']
         self.transaction_pattern = re.compile(r'\d\d.\d\d.\d{4};')
         self.account_pattern = re.compile(r'\.{3}(.*)\.{3}')

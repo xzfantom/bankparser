@@ -29,6 +29,6 @@ from bankparser.parsercsv import ParserCSV
 from bankparser.parserxml import ParserXML
 import bankparser.config
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 __author__ = "partizand, xzfantom"
 __license__ = "GPL3"

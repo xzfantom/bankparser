@@ -26,10 +26,9 @@ class Bank(ParserCSV):
     def get_transaction_table(self, lines):
         strfile = []
         for line in lines:
+            line = line.replace('::"', '00:00:00"')
             match = re.search(r'("[A|T]","\d\d.\d\d.\d\d\d\d \d\d:\d\d:\d\d".*$)', line)
             if match:
                 strfile.append(line)
     
         return strfile
-
-#"[A|T]","\d\d.\d\d.\d\d\d\d \d\d:\d\d:\d\d".*$

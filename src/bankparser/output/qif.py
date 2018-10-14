@@ -1,5 +1,5 @@
 import bankparser.statementline
-import bankparser.qifline
+import bankparser.output.qifline
 
 
 class QIF:
@@ -46,9 +46,9 @@ class QIF:
         self.lines = []
 
         for stline in statement.lines:
-            qiffields = [arg for arg in dir(bankparser.qifline.QIFLine) if not arg.startswith('_')]
+            qiffields = [arg for arg in dir(bankparser.output.qifline.QIFLine) if not arg.startswith('_')]
             statfields = [arg for arg in dir(bankparser.statementline.StatementLine) if not arg.startswith('_')]
-            qifline = bankparser.qifline.QIFLine()
+            qifline = bankparser.output.qifline.QIFLine()
             for statfield in statfields:
                 if statfield in qiffields:
                     setattr(qifline, statfield, getattr(stline, statfield))
@@ -78,10 +78,10 @@ class QIF:
         strfile += '!Type:{}\n'.format(self.type)
 
         for line in self.lines:
-            qiffields = [arg for arg in dir(bankparser.qifline.QIFLine) if not arg.startswith('_')]
+            qiffields = [arg for arg in dir(bankparser.output.qifline.QIFLine) if not arg.startswith('_')]
             for field in qiffields:
                 value = getattr(line, field)
-                qif_letter = bankparser.qifline.qifletters[field]
+                qif_letter = bankparser.output.qifline.qifletters[field]
                 if value:
                     if field == 'date':
                         strfile += 'D' + line.date.strftime('%Y-%m-%d') + '\n'

@@ -16,7 +16,7 @@ class Bank(ParserCSV):
         self.stopafter = '"  Типы операций"'
         self.type = 'Bank'
         self.fields = ['date', 'date-processing', 'account', 'operation-type', 'description', 
-            'amount-currency', 'amount-operation', 'comission-operation', 'balance', 'amount', 'comission-amount', 'status']
+            'amount-currency', 'amount-operation', 'amount-op-comission', 'balance', 'amount', 'amount-comission', 'status']
         self.transaction_pattern = re.compile(r'\d{4}-\d\d-\d\d \d\d:\d\d:\d\d.*$')
         self.comission_pattern = re.compile(r'(;-*[\d|\s]+\.\d\d)(\/)')
         self.currency_pattern = re.compile(r' \b\w{3};')
@@ -35,5 +35,5 @@ class Bank(ParserCSV):
         ll = self.comission_pattern.sub(r'\1;', line)
         # removing currency
         ll = self.currency_pattern.sub(";", ll)
-
+        #print(line + "\n" + ll + "\n")
         return ll

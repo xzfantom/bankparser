@@ -10,13 +10,13 @@ class Bank(ParserCSV):
         self.banksite = 'https://www.prior.by/'
         self.statementfile = 'statement.csv'
         self.encoding = 'windows-1251'
-        self.dateformat = '%d.%m.%Y'
+        self.dateformat = '%d.%m.%Y %H:%M:%S'
         self.delimiter = ';'
         self.startafter = '"Тип","Дата операции"'
         self.stopafter = '"  Типы операций"'
         self.type = 'Bank'
         self.fields = ['date', 'description', 'amount-wo-comission', 'currency', 'date-operation', 'comission', 'amount', 'card']
-        self.transaction_pattern = re.compile(r'^\d\d.\d\d.\d{4};')
+        self.transaction_pattern = re.compile(r'^\d\d.\d\d.\d{4} \d\d:\d\d:\d\d;')
         self.account_pattern = re.compile(r'Номер контракта:;\.*(\d*)')
 
     def parse_header(self, content, statement):
